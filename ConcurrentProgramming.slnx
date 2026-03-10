@@ -4,6 +4,7 @@
     <Project Path="Presentation/View/View.csproj" Id="e1f4dc09-f37f-426f-aa91-451d2426212a" />
     <Project Path="Presentation/ViewModel/ViewModel.csproj" Id="df2c5487-3886-42c1-91fc-757260effdd5" />
   </Folder>
+  <Project Path="ConsoleApp1/ConsoleApp1.csproj" Id="7af3b4d4-c6a4-4056-a103-7982dc956fe4" />
   <Project Path="Data/Data.csproj" Id="4bcabbfe-1240-4b68-8b88-a0a4779a06d3" />
   <Project Path="Logic/Logic.csproj" Id="0ffd6929-c98b-4368-ae94-ff51a842e039" />
 </Solution>
