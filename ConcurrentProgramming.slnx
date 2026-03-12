@@ -1,10 +1,14 @@
 <Solution>
   <Folder Name="/Presentation/">
+    <Project Path="ModelTest/ModelTest.csproj" Id="323cbad0-c916-42e6-ba35-c6f8bf791aa8" />
     <Project Path="Presentation/Model/Model.csproj" Id="a6b5a525-9f0f-4a43-83fb-2359b680f51f" />
     <Project Path="Presentation/View/View.csproj" Id="e1f4dc09-f37f-426f-aa91-451d2426212a" />
     <Project Path="Presentation/ViewModel/ViewModel.csproj" Id="df2c5487-3886-42c1-91fc-757260effdd5" />
+    <Project Path="ViewModelTest/ViewModelTest.csproj" Id="d801c6db-fe85-4b00-9cd8-208c626a9263" />
   </Folder>
   <Project Path="ConsoleApp1/ConsoleApp1.csproj" Id="7af3b4d4-c6a4-4056-a103-7982dc956fe4" />
   <Project Path="Data/Data.csproj" Id="4bcabbfe-1240-4b68-8b88-a0a4779a06d3" />
+  <Project Path="DataTest/DataTest.csproj" Id="7e271e06-d531-409b-9ad5-f00bdcad45dc" />
   <Project Path="Logic/Logic.csproj" Id="0ffd6929-c98b-4368-ae94-ff51a842e039" />
+  <Project Path="LogicTest/LogicTest.csproj" Id="660f0ee2-560a-4c31-8daf-82b4761a116f" />
 </Solution>
