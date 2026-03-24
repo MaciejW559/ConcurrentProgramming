@@ -1,0 +1,65 @@
+﻿namespace Data
+{
+    public class Ball : IBall
+    {
+        // The position of the ball is represented by the coordinates (x, y).
+        // Which are normalized to the range [0, 1]
+        // The same scale is used for the size of the ball, which is represented by a constant radius.
+        // which means the ball can have at most a radious of 0.5 to fit within the normalized coordinate system.
+        private double x;
+        private double y;
+        private const double RADIOUS = 0.03;
+
+        public event EventHandler<IVector>? NewPositionNotification;
+
+        public double X {
+            get => x;
+            init {
+                if (IsInBounds(value)) x = value;
+                
+            }
+        }
+        public double Y {
+            get => y;
+            init
+            {
+                if (IsInBounds(value)) y = value;
+            }
+        }
+
+        public required IVector Velocity { get; init; }
+
+        internal bool IsInBounds(double coordiante)
+        {
+            if (coordiante > 1 - RADIOUS) return false;
+            if (coordiante < RADIOUS) return false;
+            return true;
+        }
+
+
+        public void Move(double deltaTime)
+        {
+            double newX = X + Velocity.X * deltaTime;
+            double newY = Y + Velocity.Y * deltaTime;
+            while (!IsInBounds(newX))
+            {
+                Velocity.FlipX();
+                if (newX < RADIOUS) newX = 2 * RADIOUS - newX;
+                else newX = 2 - 2 * RADIOUS - newX;
+            }
+
+            while (!IsInBounds(newY))
+            {
+                Velocity.FlipY();
+                if (newY < RADIOUS) newY = 2 * RADIOUS - newY;
+                else newY = 2 - 2 * RADIOUS - newY;
+            }
+
+            x = newX;
+            y = newY;
+            NewPositionNotification?.Invoke(this, new Vector { X = x, Y = y});
+
+
+        }
+    }
+}

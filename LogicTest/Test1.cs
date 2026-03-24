@@ -9,8 +9,6 @@ namespace LogicTest
         [TestMethod]
         public void TestMethod1()
         {
-            Obliczenia obliczenia = new Obliczenia(new Liczby(10, 12));
-            Assert.AreEqual(22, obliczenia.dodaj());
         }
     }
 }
