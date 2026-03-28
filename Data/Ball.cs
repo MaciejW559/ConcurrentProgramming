@@ -52,7 +52,7 @@
         }
 
 
-
+        // niezgodne z wymaganiami, bo nie chciało mi się bawić w przesuwanie losowe, jak można zrobić od razu odbijanie się od ścian
         public void Move(double deltaTime)
         {
             // a bunch of repeating code

@@ -27,7 +27,7 @@ namespace Data
 
         protected virtual void Dispose(bool disposing)
         {
-            if (disposed) throw new ObjectDisposedException(nameof(DataLayerImplementation));
+            ObjectDisposedException.ThrowIf(disposed, this);
             if (disposing)
             {
                 clock.Dispose();
@@ -38,7 +38,7 @@ namespace Data
 
         public override void Start(int ballCount, Action<IBall> upperLayerHandler)
         {
-            if (disposed) throw new ObjectDisposedException(nameof(DataLayerImplementation));
+            ObjectDisposedException.ThrowIf(disposed, this);
             for (int i = 0; i < ballCount; i++)
             {
                 Ball ball = new Ball(random);
