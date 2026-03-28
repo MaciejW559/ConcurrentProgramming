@@ -27,18 +27,35 @@
             }
         }
 
-        public required IVector Velocity { get; init; }
+        public IVector Velocity { get; init; }
 
-        internal bool IsInBounds(double coordiante)
-        {
-            if (coordiante > 1 - RADIOUS) return false;
-            if (coordiante < RADIOUS) return false;
-            return true;
+
+        public Ball() {
+            X = 0.5;
+            Y = 0.5;
+            Velocity = new Vector
+            {
+                X = 0,
+                Y = 0
+            };
         }
+
+        public Ball(Random random)
+        {
+            X = RADIOUS + (1 - 2 * RADIOUS) * random.NextDouble();
+            Y = RADIOUS + (1 - 2 * RADIOUS) * random.NextDouble();
+            Velocity = new Vector
+            {
+                X = random.NextDouble(),
+                Y = random.NextDouble()
+            };
+        }
+
 
 
         public void Move(double deltaTime)
         {
+            // a bunch of repeating code
             double newX = X + Velocity.X * deltaTime;
             double newY = Y + Velocity.Y * deltaTime;
             while (!IsInBounds(newX))
@@ -59,7 +76,14 @@
             y = newY;
             NewPositionNotification?.Invoke(this, new Vector { X = x, Y = y});
 
-
         }
+
+        private bool IsInBounds(double coordiante)
+        {
+            if (coordiante > 1 - RADIOUS) return false;
+            if (coordiante < RADIOUS) return false;
+            return true;
+        }
+
     }
 }
