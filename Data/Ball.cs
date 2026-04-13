@@ -5,10 +5,10 @@
         // The position of the ball is represented by the coordinates (x, y).
         // Which are normalized to the range [0, 1]
         // The same scale is used for the size of the ball, which is represented by a constant radius.
-        // which means the ball can have at most a radious of 0.5 to fit within the normalized coordinate system.
+        // which means the ball can have at most a RADIUS of 0.5 to fit within the normalized coordinate system.
         private double x;
         private double y;
-        private const double RADIOUS = 0.03;
+        private const double RADIUS = 0.03;
 
         public event EventHandler<IVector>? NewPositionNotification;
 
@@ -42,8 +42,8 @@
 
         public Ball(Random random)
         {
-            X = RADIOUS + (1 - 2 * RADIOUS) * random.NextDouble();
-            Y = RADIOUS + (1 - 2 * RADIOUS) * random.NextDouble();
+            X = RADIUS + (1 - 2 * RADIUS) * random.NextDouble();
+            Y = RADIUS + (1 - 2 * RADIUS) * random.NextDouble();
             Velocity = new Vector
             {
                 X = random.NextDouble(),
@@ -61,15 +61,15 @@
             while (!IsInBounds(newX))
             {
                 Velocity.FlipX();
-                if (newX < RADIOUS) newX = 2 * RADIOUS - newX;
-                else newX = 2 - 2 * RADIOUS - newX;
+                if (newX < RADIUS) newX = 2 * RADIUS - newX;
+                else newX = 2 - 2 * RADIUS - newX;
             }
 
             while (!IsInBounds(newY))
             {
                 Velocity.FlipY();
-                if (newY < RADIOUS) newY = 2 * RADIOUS - newY;
-                else newY = 2 - 2 * RADIOUS - newY;
+                if (newY < RADIUS) newY = 2 * RADIUS - newY;
+                else newY = 2 - 2 * RADIUS - newY;
             }
 
             x = newX;
@@ -80,8 +80,8 @@
 
         private bool IsInBounds(double coordiante)
         {
-            if (coordiante > 1 - RADIOUS) return false;
-            if (coordiante < RADIOUS) return false;
+            if (coordiante > 1 - RADIUS) return false;
+            if (coordiante < RADIUS) return false;
             return true;
         }
 
