@@ -5,7 +5,7 @@ using Data;
 
 namespace Logic
 {
-    internal abstract class LogicAbstractAPI : IDisposable
+    public abstract class LogicAbstractAPI : IDisposable
     {
         private static Lazy<LogicAbstractAPI> modelInstance = new Lazy<LogicAbstractAPI>(() => new LogicLayerImplementation());
         public static LogicAbstractAPI GetLogicLayer()

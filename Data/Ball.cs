@@ -1,6 +1,6 @@
 ﻿namespace Data
 {
-    public class Ball : IBall
+    internal class Ball : IBall
     {
         // The position of the ball is represented by the coordinates (x, y).
         // Which are normalized to the range [0, 1]
@@ -8,82 +8,86 @@
         // which means the ball can have at most a RADIUS of 0.5 to fit within the normalized coordinate system.
         private double x;
         private double y;
-        private const double RADIUS = 0.03;
+
+         private const double RADIUS_Y = 0.03;
+        private const double RADIUS_X = RADIUS_Y * (3.0 / 4.0);
 
         public event EventHandler<IVector>? NewPositionNotification;
 
-        public double X {
+        public double X
+        {
             get => x;
-            init {
-                if (IsInBounds(value)) x = value;
-                
+            init
+            {
+                if (IsInBoundsX(value)) x = value;
             }
         }
-        public double Y {
+        public double Y
+        {
             get => y;
             init
             {
-                if (IsInBounds(value)) y = value;
+                if (IsInBoundsY(value)) y = value;
             }
         }
 
         public IVector Velocity { get; init; }
 
-
-        public Ball() {
-            X = 0.5;
-            Y = 0.5;
-            Velocity = new Vector
-            {
-                X = 0,
-                Y = 0
-            };
+        public Ball()
+        {
+            x = 0.5;
+            y = 0.5;
+            Velocity = new Vector { X = 0, Y = 0 };
         }
 
         public Ball(Random random)
         {
-            X = RADIUS + (1 - 2 * RADIUS) * random.NextDouble();
-            Y = RADIUS + (1 - 2 * RADIUS) * random.NextDouble();
+            x = RADIUS_X + (1 - 2 * RADIUS_X) * random.NextDouble();
+            y = RADIUS_Y + (1 - 2 * RADIUS_Y) * random.NextDouble();
+
             Velocity = new Vector
             {
-                X = random.NextDouble(),
-                Y = random.NextDouble()
+                X = (random.NextDouble() * 2 - 1) * 0.0001,
+                Y = (random.NextDouble() * 2 - 1) * 0.0001,
             };
         }
 
-
-        // niezgodne z wymaganiami, bo nie chciało mi się bawić w przesuwanie losowe, jak można zrobić od razu odbijanie się od ścian
         public void Move(double deltaTime)
         {
-            // a bunch of repeating code
-            double newX = X + Velocity.X * deltaTime;
-            double newY = Y + Velocity.Y * deltaTime;
-            while (!IsInBounds(newX))
+            double newX = x + Velocity.X * deltaTime;
+            double newY = y + Velocity.Y * deltaTime;
+
+            while (!IsInBoundsX(newX))
             {
                 Velocity.FlipX();
-                if (newX < RADIUS) newX = 2 * RADIUS - newX;
-                else newX = 2 - 2 * RADIUS - newX;
+                if (newX < RADIUS_X) newX = 2 * RADIUS_X - newX;
+                else newX = 2 - 2 * RADIUS_X - newX;
             }
 
-            while (!IsInBounds(newY))
+            while (!IsInBoundsY(newY))
             {
                 Velocity.FlipY();
-                if (newY < RADIUS) newY = 2 * RADIUS - newY;
-                else newY = 2 - 2 * RADIUS - newY;
+                if (newY < RADIUS_Y) newY = 2 * RADIUS_Y - newY;
+                else newY = 2 - 2 * RADIUS_Y - newY;
             }
 
             x = newX;
             y = newY;
-            NewPositionNotification?.Invoke(this, new Vector { X = x, Y = y});
-
+            NewPositionNotification?.Invoke(this, new Vector { X = x, Y = y });
         }
 
-        private bool IsInBounds(double coordiante)
+        private bool IsInBoundsX(double coordinate)
         {
-            if (coordiante > 1 - RADIUS) return false;
-            if (coordiante < RADIUS) return false;
+            if (coordinate > 1 - RADIUS_X) return false;
+            if (coordinate < RADIUS_X) return false;
             return true;
         }
 
+        private bool IsInBoundsY(double coordinate)
+        {
+            if (coordinate > 1 - RADIUS_Y) return false;
+            if (coordinate < RADIUS_Y) return false;
+            return true;
+        }
     }
 }

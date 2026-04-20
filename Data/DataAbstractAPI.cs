@@ -6,7 +6,7 @@ namespace Data
 {
     public abstract class DataAbstractAPI : IDisposable
     {
-        private static Lazy<DataAbstractAPI> modelInstance = new Lazy<DataAbstractAPI>(() => new DataLayerImplementation(30));
+        private static Lazy<DataAbstractAPI> modelInstance = new Lazy<DataAbstractAPI>(() => new DataLayerImplementation(60));
         public static DataAbstractAPI GetDataLayer()
         {
             return modelInstance.Value;
