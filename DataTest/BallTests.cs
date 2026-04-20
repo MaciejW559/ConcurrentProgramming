@@ -40,17 +40,15 @@ namespace DataTest
         {
             var ball = new Ball
             {
-                X = 0.97,
+                X = 0.90,
                 Y = 0.5,
-                Velocity = new Data.Vector { X = 0.05, Y = 0.0 }
+                Velocity = new Data.Vector { X = 0.15, Y = 0.0 }
             };
 
             ball.Move(1.0);
 
-            Assert.AreEqual(0.935, ball.X, 0.0001, "The X position is incorrect after bouncing off the right wall.");
-
-            Assert.AreEqual(-0.05, ball.Velocity.X, 0.0001, "X-axis velocity did not reverse after hitting the wall.");
-
+            Assert.AreEqual(0.905, ball.X, 0.0001, "The X position is incorrect after bouncing off the right wall.");
+            Assert.AreEqual(-0.15, ball.Velocity.X, 0.0001, "X-axis velocity did not reverse after hitting the wall.");
             Assert.AreEqual(0.5, ball.Y, 0.0001, "The Y position should remain unchanged.");
         }
     }
