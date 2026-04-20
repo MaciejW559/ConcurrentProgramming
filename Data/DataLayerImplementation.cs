@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Timers;
+﻿using Data;
 
-namespace Data
+
+namespace Datagit
 {
     internal class DataLayerImplementation : DataAbstractAPI
     {
@@ -44,7 +42,7 @@ namespace Data
         }
 
 
-        public void Move(double deltaTime)
+        public override void Move(double deltaTime)
         {
             foreach (var ball in balls)
             {
