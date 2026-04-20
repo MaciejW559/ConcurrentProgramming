@@ -20,6 +20,8 @@ namespace Logic
 
         public abstract void Start(int ballCount, Action<IBall> upperLayerHandler);
 
+        public abstract Task SequentialMainLoop();
+
         #endregion public API
     }
 }

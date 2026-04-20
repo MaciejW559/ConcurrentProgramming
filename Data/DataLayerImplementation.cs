@@ -15,21 +15,6 @@ namespace Data
         {
         }
 
-        public override void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            ObjectDisposedException.ThrowIf(disposed, this);
-            if (disposing)
-            {
-                balls.Clear();
-            }
-            disposed = true;
-        }
 
         public override void Start(int ballCount, Action<IBall> upperLayerHandler)
         {
@@ -44,12 +29,27 @@ namespace Data
         }
 
 
-        public void Move(double deltaTime)
+        public override void Move(double deltaTime)
         {
             foreach (var ball in balls)
             {
                 ball.Move(deltaTime);
             }
+        }
+        public override void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            ObjectDisposedException.ThrowIf(disposed, this);
+            if (disposing)
+            {
+                balls.Clear();
+            }
+            disposed = true;
         }
     }
 }

@@ -4,7 +4,7 @@
         xmlns:vm="clr-namespace:ViewModel;assembly=ViewModel"
         Title="Symulator Kul" 
         Width="960" Height="540" 
-        ResizeMode="NoResize"
+        ResizeMode="CanResize"
         WindowStartupLocation="CenterScreen">
 
     <Window.DataContext>
@@ -13,41 +13,47 @@
 
     <Grid Margin="0">
         <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="150" />
             <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="560" />
-            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="150" />
         </Grid.ColumnDefinitions>
 
-        <Border Grid.Column="1"
-                Width="560" Height="420" 
-                BorderBrush="Black" BorderThickness="2" 
-                HorizontalAlignment="Center" VerticalAlignment="Center">
-            <ItemsControl ItemsSource="{Binding Balls}">
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <Canvas ClipToBounds="True" Background="GhostWhite" />
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-                <ItemsControl.ItemContainerStyle>
-                    <Style TargetType="ContentPresenter">
-                        <Setter Property="Canvas.Left" Value="{Binding X}" />
-                        <Setter Property="Canvas.Top" Value="{Binding Y}" />
-                    </Style>
-                </ItemsControl.ItemContainerStyle>
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <Ellipse Width="{Binding Diameter}" Height="{Binding Diameter}" 
-                                 Fill="DodgerBlue" Stroke="Black" StrokeThickness="1"/>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
-        </Border>
+        <Viewbox Grid.Column="1" Stretch="Uniform">
+            <Canvas Width="560" Height="420">
+                <Border
+                    Width="560" Height="420"
+                    BorderBrush="Black" BorderThickness="2" 
+                    HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <ItemsControl ItemsSource="{Binding Balls}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <Canvas ClipToBounds="True" Background="GhostWhite" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemContainerStyle>
+                            <Style TargetType="ContentPresenter">
+                                <Setter Property="Canvas.Left" Value="{Binding X}" />
+                                <Setter Property="Canvas.Top" Value="{Binding Y}" />
+                            </Style>
+                        </ItemsControl.ItemContainerStyle>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Ellipse Width="{Binding Diameter}" Height="{Binding Diameter}" 
+                                Fill="DodgerBlue" Stroke="Black" StrokeThickness="1"/>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </Border>
+            </Canvas>
+        </Viewbox>
+
+        
 
         <StackPanel Grid.Column="2" 
                     Orientation="Vertical" 
                     VerticalAlignment="Center" 
                     HorizontalAlignment="Center" 
-                    Height="420">
+                    >
 
             <Button Content="Start Symulacji" 
                     Command="{Binding StartCommand}" 

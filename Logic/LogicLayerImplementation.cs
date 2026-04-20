@@ -13,8 +13,7 @@ namespace Logic
         LayerUnderneathAPI layerUnderneathAPI;
         private bool disposed = false;
 
-        private ObservableCollection<IBall> _balls { get; }
-        public ReadOnlyObservableCollection<IBall> Balls { get; }
+        private ObservableCollection<IBall> balls { get; }
 
         private PeriodicTimer timer;
 
@@ -25,13 +24,12 @@ namespace Logic
         public LogicLayerImplementation(LayerUnderneathAPI? layerUnderneathAPI)
         {
             this.layerUnderneathAPI = layerUnderneathAPI == null ? LayerUnderneathAPI.GetDataLayer() : layerUnderneathAPI;
-            _balls = new ObservableCollection<IBall>();
-            Balls = new ReadOnlyObservableCollection<IBall>(_balls);
+            balls = new ObservableCollection<IBall>();
             timer = new PeriodicTimer(TimeSpan.FromSeconds(1.0 / FPS));
         }
 
 
-        public override void Start(int ballCount, Action<IBall> upperLayerHandler)
+        public override async void Start(int ballCount, Action<IBall> upperLayerHandler)
         {
             ObjectDisposedException.ThrowIf(disposed, this);
             if (ballCount < 0)
@@ -41,14 +39,14 @@ namespace Logic
 
             Action<IBall> registerBallWithUpperLayerHandler = (ball) =>
             {
-                _balls.Add(ball);
+                balls.Add(ball);
                 upperLayerHandler(ball);
             };
             
             layerUnderneathAPI.Start(ballCount, registerBallWithUpperLayerHandler);
         }
 
-        public async Task SequentialMainLoop()
+        public override async Task SequentialMainLoop()
         {
             var timestamp = Stopwatch.GetTimestamp();
 

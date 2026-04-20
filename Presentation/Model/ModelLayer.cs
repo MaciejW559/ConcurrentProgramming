@@ -20,6 +20,8 @@ namespace Model
             {
                 Balls.Add(new BallModel(newBall));
             });
+
+            _logicLayer.SequentialMainLoop();
         }
 
         public override void Dispose()
