@@ -9,7 +9,7 @@
         private double x;
         private double y;
 
-         private const double RADIUS_Y = 0.03;
+        private const double RADIUS_Y = 0.03;
         private const double RADIUS_X = RADIUS_Y * (3.0 / 4.0);
 
         public event EventHandler<IVector>? NewPositionNotification;
