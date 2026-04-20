@@ -8,15 +8,11 @@ namespace Data
     internal class DataLayerImplementation : DataAbstractAPI
     {
         private bool disposed = false;
-        private readonly System.Timers.Timer clock;
         private Random random = new Random();
         private List<Ball> balls = new List<Ball>();
 
-        public DataLayerImplementation(double fps)
+        public DataLayerImplementation()
         {
-            clock = new System.Timers.Timer(TimeSpan.FromSeconds(1 / fps));
-            clock.Elapsed += (object? sender, ElapsedEventArgs e) => Move();
-            clock.AutoReset = true;
         }
 
         public override void Dispose()
@@ -30,7 +26,6 @@ namespace Data
             ObjectDisposedException.ThrowIf(disposed, this);
             if (disposing)
             {
-                clock.Dispose();
                 balls.Clear();
             }
             disposed = true;
@@ -46,16 +41,14 @@ namespace Data
                 upperLayerHandler(ball);
                 balls.Add(ball);
             }
-
-            clock.Start();
         }
 
 
-        private void Move()
+        public void Move(double deltaTime)
         {
             foreach (var ball in balls)
             {
-                ball.Move(clock.Interval);
+                ball.Move(deltaTime);
             }
         }
     }

@@ -4,13 +4,16 @@
     {
         // The position of the ball is represented by the coordinates (x, y).
         // Which are normalized to the range [0, 1]
-        // The same scale is used for the size of the ball, which is represented by a constant radius.
-        // which means the ball can have at most a RADIUS of 0.5 to fit within the normalized coordinate system.
+        // The same scale is used for the size of the ball.
+        // To enable the room to have a different aspect ratio than 1:1, the radius of the ball is defined separately for x and y.
         private double x;
         private double y;
 
+        private const double SIMULATION_ROOM_ASPECT_RATIO = 4.0 / 3.0;
         private const double RADIUS_Y = 0.03;
-        private const double RADIUS_X = RADIUS_Y * (3.0 / 4.0);
+        private const double RADIUS_X = RADIUS_Y * SIMULATION_ROOM_ASPECT_RATIO;
+
+        private const double MAX_RANDOM_VELOCITY = 0.0003; // on one of the axes
 
         public event EventHandler<IVector>? NewPositionNotification;
 
@@ -40,6 +43,11 @@
             Velocity = new Vector { X = 0, Y = 0 };
         }
 
+
+        /// <summary>
+        /// Creates a ball at a random position in the simulation room with a random velocity.
+        /// </summary>
+        /// <param name="random"></param>
         public Ball(Random random)
         {
             x = RADIUS_X + (1 - 2 * RADIUS_X) * random.NextDouble();
@@ -47,11 +55,16 @@
 
             Velocity = new Vector
             {
-                X = (random.NextDouble() * 2 - 1) * 0.0001,
-                Y = (random.NextDouble() * 2 - 1) * 0.0001,
+                X = (random.NextDouble() * 2 - 1) * MAX_RANDOM_VELOCITY,
+                Y = (random.NextDouble() * 2 - 1) * MAX_RANDOM_VELOCITY,
             };
         }
 
+        /// <summary>
+        /// Move the ball according to its velocity and the time elapsed since the last movement in seconds.
+        /// Includes bouncing off the walls of the simulation room, which are located at x = 0, x = 1, y = 0 and y = 1.
+        /// </summary>
+        /// <param name="deltaTime"></param>
         public void Move(double deltaTime)
         {
             double newX = x + Velocity.X * deltaTime;
