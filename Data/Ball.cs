@@ -11,7 +11,7 @@
 
         private const double SIMULATION_ROOM_ASPECT_RATIO = 4.0 / 3.0;
         public double RADIUS_Y => 0.03;
-        public double RADIUS_X => 0.04;
+        public double RADIUS_X => RADIUS_Y / SIMULATION_ROOM_ASPECT_RATIO;
 
         private const double MAX_RANDOM_VELOCITY = 0.3; // on one of the axes
 
