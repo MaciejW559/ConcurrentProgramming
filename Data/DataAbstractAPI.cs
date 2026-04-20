@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.ComponentModel;
 
 namespace Data
 {
@@ -38,9 +36,8 @@ namespace Data
         void FlipY();
     }
 
-    public interface IBall
+    public interface IBall : INotifyPropertyChanged
     {
-        event EventHandler<IVector> NewPositionNotification;
 
         IVector Velocity { get; init; }
 

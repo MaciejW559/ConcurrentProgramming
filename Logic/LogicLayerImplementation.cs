@@ -15,8 +15,7 @@ namespace Logic
 
         private ObservableCollection<IBall> balls { get; }
 
-        
-
+        private CancellationTokenSource? tokenSource;
 
         public LogicLayerImplementation() : this(null) { }
 
@@ -29,7 +28,7 @@ namespace Logic
         }
 
 
-        public override async void Start(int ballCount, Action<IBall> upperLayerHandler)
+        public override void Start(int ballCount, Action<IBall> upperLayerHandler)
         {
             ObjectDisposedException.ThrowIf(disposed, this);
             if (ballCount < 0)
@@ -48,18 +47,33 @@ namespace Logic
 
         public override async Task SequentialMainLoop()
         {
+            tokenSource = new CancellationTokenSource();
+            CancellationToken token = tokenSource.Token;
 
             using var timer = new PeriodicTimer(TimeSpan.FromSeconds(1.0 / FPS));
             var timestamp = Stopwatch.GetTimestamp();
 
-            while (await timer.WaitForNextTickAsync())
+            try
             {
-                var elapsed = Stopwatch.GetElapsedTime(timestamp);
-                timestamp = Stopwatch.GetTimestamp();
+                while (await timer.WaitForNextTickAsync(token))
+                {
+                    var elapsed = Stopwatch.GetElapsedTime(timestamp);
+                    timestamp = Stopwatch.GetTimestamp();
 
-                layerUnderneathAPI.Move(elapsed.TotalSeconds);
+                    layerUnderneathAPI.Move(elapsed.TotalSeconds);
+                }
+            }
+            catch (OperationCanceledException)
+            {
+                // expected, token triggered cancellation
             }
         }
+
+        public override void AbandonMainLoop()
+        {
+            tokenSource?.Cancel();
+        }
+
 
         public override void Dispose()
         {
@@ -74,8 +88,11 @@ namespace Logic
             ObjectDisposedException.ThrowIf(disposed, this);
             if (disposing)
             {
-                //timer.Dispose();
+                tokenSource?.Cancel();
+
                 layerUnderneathAPI.Dispose();
+
+                tokenSource?.Dispose();
             }
             disposed = true;
         }
