@@ -13,10 +13,9 @@ namespace Logic
         LayerUnderneathAPI layerUnderneathAPI;
         private bool disposed = false;
 
-        private ObservableCollection<IBall> _balls { get; }
-        public ReadOnlyObservableCollection<IBall> Balls { get; }
+        private ObservableCollection<IBall> balls { get; }
 
-        private PeriodicTimer timer;
+        
 
 
         public LogicLayerImplementation() : this(null) { }
@@ -25,13 +24,12 @@ namespace Logic
         public LogicLayerImplementation(LayerUnderneathAPI? layerUnderneathAPI)
         {
             this.layerUnderneathAPI = layerUnderneathAPI == null ? LayerUnderneathAPI.GetDataLayer() : layerUnderneathAPI;
-            _balls = new ObservableCollection<IBall>();
-            Balls = new ReadOnlyObservableCollection<IBall>(_balls);
-            timer = new PeriodicTimer(TimeSpan.FromSeconds(1.0 / FPS));
+            balls = new ObservableCollection<IBall>();
+
         }
 
 
-        public override void Start(int ballCount, Action<IBall> upperLayerHandler)
+        public override async void Start(int ballCount, Action<IBall> upperLayerHandler)
         {
             ObjectDisposedException.ThrowIf(disposed, this);
             if (ballCount < 0)
@@ -41,15 +39,17 @@ namespace Logic
 
             Action<IBall> registerBallWithUpperLayerHandler = (ball) =>
             {
-                _balls.Add(ball);
+                balls.Add(ball);
                 upperLayerHandler(ball);
             };
             
             layerUnderneathAPI.Start(ballCount, registerBallWithUpperLayerHandler);
         }
 
-        public async Task SequentialMainLoop()
+        public override async Task SequentialMainLoop()
         {
+
+            using var timer = new PeriodicTimer(TimeSpan.FromSeconds(1.0 / FPS));
             var timestamp = Stopwatch.GetTimestamp();
 
             while (await timer.WaitForNextTickAsync())
@@ -69,10 +69,12 @@ namespace Logic
 
         protected virtual void Dispose(bool disposing)
         {
+
+           
             ObjectDisposedException.ThrowIf(disposed, this);
             if (disposing)
             {
-                timer.Dispose();
+                //timer.Dispose();
                 layerUnderneathAPI.Dispose();
             }
             disposed = true;

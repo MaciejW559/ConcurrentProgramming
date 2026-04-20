@@ -1,7 +1,9 @@
-﻿using Data;
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Timers;
 
-
-namespace Datagit
+namespace Data
 {
     internal class DataLayerImplementation : DataAbstractAPI
     {
@@ -13,21 +15,6 @@ namespace Datagit
         {
         }
 
-        public override void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            ObjectDisposedException.ThrowIf(disposed, this);
-            if (disposing)
-            {
-                balls.Clear();
-            }
-            disposed = true;
-        }
 
         public override void Start(int ballCount, Action<IBall> upperLayerHandler)
         {
@@ -48,6 +35,21 @@ namespace Datagit
             {
                 ball.Move(deltaTime);
             }
+        }
+        public override void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            ObjectDisposedException.ThrowIf(disposed, this);
+            if (disposing)
+            {
+                balls.Clear();
+            }
+            disposed = true;
         }
     }
 }

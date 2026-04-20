@@ -8,17 +8,18 @@ namespace Model
     {
         private readonly IBall _ball;
 
-        private const double CanvasWidth = 560;
-        private const double CanvasHeight = 420;
 
-        public double Diameter => 0.06 * CanvasHeight;
+        public double Diameter { get; }
 
-        public double X => (_ball.X * CanvasWidth) - (Diameter / 2);
-        public double Y => (_ball.Y * CanvasHeight) - (Diameter / 2);
+        public double X => (_ball.X * ModelAbstractAPI.DEFAULT_WIDTH) - (Diameter / 2.0);
+        public double Y => (_ball.Y * ModelAbstractAPI.DEFAULT_HEIGHT) - (Diameter / 2.0);
 
         public BallModel(IBall ball)
         {
             _ball = ball;
+            // Assuming the aspect ratio is maintained, we can use RADIUS_X for both dimensions.
+            Diameter = ball.RADIUS_Y * 2.0 * ModelAbstractAPI.DEFAULT_HEIGHT;
+
             _ball.NewPositionNotification += OnPositionChanged;
         }
 
