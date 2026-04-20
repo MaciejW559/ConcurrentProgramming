@@ -17,7 +17,6 @@ namespace Logic
 
         private CancellationTokenSource? tokenSource;
 
-
         public LogicLayerImplementation() : this(null) { }
 
 
@@ -29,7 +28,7 @@ namespace Logic
         }
 
 
-        public override async void Start(int ballCount, Action<IBall> upperLayerHandler)
+        public override void Start(int ballCount, Action<IBall> upperLayerHandler)
         {
             ObjectDisposedException.ThrowIf(disposed, this);
             if (ballCount < 0)
@@ -89,8 +88,11 @@ namespace Logic
             ObjectDisposedException.ThrowIf(disposed, this);
             if (disposing)
             {
-                //timer.Dispose();
+                tokenSource?.Cancel();
+
                 layerUnderneathAPI.Dispose();
+
+                tokenSource?.Dispose();
             }
             disposed = true;
         }

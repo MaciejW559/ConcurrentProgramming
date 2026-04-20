@@ -20,13 +20,20 @@ namespace Model
             // Assuming the aspect ratio is maintained, we can use RADIUS_X for both dimensions.
             Diameter = ball.RADIUS_Y * 2.0 * ModelAbstractAPI.DEFAULT_HEIGHT;
 
-            _ball.NewPositionNotification += OnPositionChanged;
+            _ball.PropertyChanged += OnPositionChanged;
         }
 
-        private void OnPositionChanged(object? sender, IVector vector)
+        private void OnPositionChanged(object? sender, PropertyChangedEventArgs args)
         {
-            OnPropertyChanged(nameof(X));
-            OnPropertyChanged(nameof(Y));
+            switch (args.PropertyName)
+            {
+                case nameof(IBall.X):
+                    OnPropertyChanged(nameof(X));
+                    break;
+                case nameof(IBall.Y):
+                    OnPropertyChanged(nameof(Y));
+                    break;
+            }
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;

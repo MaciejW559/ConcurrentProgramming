@@ -1,4 +1,7 @@
-﻿namespace Data
+﻿using System.ComponentModel;
+using System.Runtime.CompilerServices;
+
+namespace Data
 {
     internal class Ball : IBall
     {
@@ -15,7 +18,7 @@
 
         private const double MAX_RANDOM_VELOCITY = 0.3; // on one of the axes
 
-        public event EventHandler<IVector>? NewPositionNotification;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         public double X
         {
@@ -86,7 +89,13 @@
 
             x = newX;
             y = newY;
-            NewPositionNotification?.Invoke(this, new Vector { X = x, Y = y });
+            OnPropertyChanged(nameof(X));
+            OnPropertyChanged(nameof(Y));
+        }
+
+        protected void OnPropertyChanged([CallerMemberName] string? name = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
 
         private bool IsInBoundsX(double coordinate)
