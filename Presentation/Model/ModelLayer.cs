@@ -16,6 +16,7 @@ namespace Model
         public override void StartSimulation(int ballCount)
         {
             Balls.Clear();
+            _logicLayer.AbandonMainLoop();
             _logicLayer.Start(ballCount, (newBall) =>
             {
                 Balls.Add(new BallModel(newBall));

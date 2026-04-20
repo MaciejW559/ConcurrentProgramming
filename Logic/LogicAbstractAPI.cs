@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Data;
+﻿using Data;
 
 namespace Logic
 {
@@ -21,6 +18,8 @@ namespace Logic
         public abstract void Start(int ballCount, Action<IBall> upperLayerHandler);
 
         public abstract Task SequentialMainLoop();
+
+        public abstract void AbandonMainLoop();
 
         #endregion public API
     }
