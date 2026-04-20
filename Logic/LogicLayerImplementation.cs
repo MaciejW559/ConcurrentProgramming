@@ -1,4 +1,7 @@
 ﻿using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using Data;
 using LayerUnderneathAPI = Data.DataAbstractAPI;
 
@@ -13,6 +16,9 @@ namespace Logic
         private ObservableCollection<IBall> _balls { get; }
         public ReadOnlyObservableCollection<IBall> Balls { get; }
 
+        private PeriodicTimer timer;
+
+
         public LogicLayerImplementation() : this(null) { }
 
 
@@ -21,7 +27,7 @@ namespace Logic
             this.layerUnderneathAPI = layerUnderneathAPI == null ? LayerUnderneathAPI.GetDataLayer() : layerUnderneathAPI;
             _balls = new ObservableCollection<IBall>();
             Balls = new ReadOnlyObservableCollection<IBall>(_balls);
-
+            timer = new PeriodicTimer(TimeSpan.FromSeconds(1.0 / FPS));
         }
 
 
@@ -42,7 +48,18 @@ namespace Logic
             layerUnderneathAPI.Start(ballCount, registerBallWithUpperLayerHandler);
         }
 
+        public async Task SequentialMainLoop()
+        {
+            var timestamp = Stopwatch.GetTimestamp();
 
+            while (await timer.WaitForNextTickAsync())
+            {
+                var elapsed = Stopwatch.GetElapsedTime(timestamp);
+                timestamp = Stopwatch.GetTimestamp();
+
+                layerUnderneathAPI.Move(elapsed.TotalSeconds);
+            }
+        }
 
         public override void Dispose()
         {
@@ -55,6 +72,7 @@ namespace Logic
             ObjectDisposedException.ThrowIf(disposed, this);
             if (disposing)
             {
+                timer.Dispose();
                 layerUnderneathAPI.Dispose();
             }
             disposed = true;

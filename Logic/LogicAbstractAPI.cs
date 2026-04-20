@@ -7,6 +7,8 @@ namespace Logic
 {
     public abstract class LogicAbstractAPI : IDisposable
     {
+        protected static readonly double FPS = 60;
+
         private static Lazy<LogicAbstractAPI> modelInstance = new Lazy<LogicAbstractAPI>(() => new LogicLayerImplementation());
         public static LogicAbstractAPI GetLogicLayer()
         {
