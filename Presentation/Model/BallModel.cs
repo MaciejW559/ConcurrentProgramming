@@ -11,16 +11,14 @@ namespace Model
 
         public double Diameter { get; }
 
-        public double X { get; }
-        public double Y { get; }
+        public double X => (_ball.X * ModelAbstractAPI.DEFAULT_WIDTH) - (Diameter / 2.0);
+        public double Y => (_ball.Y * ModelAbstractAPI.DEFAULT_HEIGHT) - (Diameter / 2.0);
 
         public BallModel(IBall ball)
         {
             _ball = ball;
             // Assuming the aspect ratio is maintained, we can use RADIUS_X for both dimensions.
-            Diameter = ball.RADIUS_X * 2 * ModelAbstractAPI.DEFAULT_WIDTH;
-            X = _ball.X * ModelAbstractAPI.DEFAULT_WIDTH - Diameter / 2;
-            Y = _ball.Y * ModelAbstractAPI.DEFAULT_HEIGHT - Diameter / 2;
+            Diameter = ball.RADIUS_Y * 2.0 * ModelAbstractAPI.DEFAULT_HEIGHT;
 
             _ball.NewPositionNotification += OnPositionChanged;
         }

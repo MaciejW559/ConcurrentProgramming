@@ -15,7 +15,7 @@ namespace Logic
 
         private ObservableCollection<IBall> balls { get; }
 
-        private PeriodicTimer timer;
+        
 
 
         public LogicLayerImplementation() : this(null) { }
@@ -25,7 +25,7 @@ namespace Logic
         {
             this.layerUnderneathAPI = layerUnderneathAPI == null ? LayerUnderneathAPI.GetDataLayer() : layerUnderneathAPI;
             balls = new ObservableCollection<IBall>();
-            timer = new PeriodicTimer(TimeSpan.FromSeconds(1.0 / FPS));
+
         }
 
 
@@ -48,6 +48,8 @@ namespace Logic
 
         public override async Task SequentialMainLoop()
         {
+
+            using var timer = new PeriodicTimer(TimeSpan.FromSeconds(1.0 / FPS));
             var timestamp = Stopwatch.GetTimestamp();
 
             while (await timer.WaitForNextTickAsync())
@@ -67,10 +69,12 @@ namespace Logic
 
         protected virtual void Dispose(bool disposing)
         {
+
+           
             ObjectDisposedException.ThrowIf(disposed, this);
             if (disposing)
             {
-                timer.Dispose();
+                //timer.Dispose();
                 layerUnderneathAPI.Dispose();
             }
             disposed = true;
