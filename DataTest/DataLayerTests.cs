@@ -35,7 +35,7 @@ namespace DataTest
                     receivedBalls.Add(ball);
                 });
 
-                Assert.HasCount(10, receivedBalls, "Nie wygenerowano oczekiwanej liczby 100 kul.");
+                Assert.HasCount(10, receivedBalls, "Nie wygenerowano oczekiwanej liczby 10 kul.");
 
                 foreach (var ball in receivedBalls)
                 {
@@ -71,18 +71,9 @@ namespace DataTest
 
                 dataApi.Move(10.0);
 
-                bool anyMoved = false;
-                for (int i = 0; i < receivedBalls.Count; i++)
-                {
-                    double diffX = Math.Abs(receivedBalls[i].X - initialPositions[i].X);
-                    double diffY = Math.Abs(receivedBalls[i].Y - initialPositions[i].Y);
-
-                    if (diffX > 0.0001 || diffY > 0.0001)
-                    {
-                        anyMoved = true;
-                        break;
-                    }
-                }
+                bool anyMoved = receivedBalls.Where((ball, i) =>
+                    Math.Abs(ball.X - initialPositions[i].X) > 0.0 ||
+                    Math.Abs(ball.Y - initialPositions[i].Y) > 0.0).Any();
 
                 Assert.IsTrue(anyMoved, "Żadna z kul nie zmieniła swojej pozycji po wywołaniu metody Move. Wartości X i Y pozostały identyczne.");
             }
