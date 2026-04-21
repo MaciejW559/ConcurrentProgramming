@@ -13,9 +13,10 @@ namespace ViewModelTest
             public int StartedSimulationBallCount { get; private set; } = 0;
             public override ObservableCollection<BallModel> Balls { get; } = new ObservableCollection<BallModel>();
 
-            public override void StartSimulation(int ballCount)
+            public override Task StartSimulation(int ballCount)
             {
                 StartedSimulationBallCount = ballCount;
+                return Task.CompletedTask;
             }
 
             public override void Dispose() { }

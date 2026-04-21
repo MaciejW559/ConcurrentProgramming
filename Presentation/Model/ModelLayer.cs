@@ -6,6 +6,7 @@ namespace Model
     public class ModelLayer : ModelAbstractAPI
     {
         private readonly LogicAbstractAPI _logicLayer;
+        private Task? mainLoopTask;
         public override ObservableCollection<BallModel> Balls { get; } = new ObservableCollection<BallModel>();
 
         public ModelLayer()
@@ -18,16 +19,22 @@ namespace Model
             _logicLayer = logicLayer;
         }
 
-        public override void StartSimulation(int ballCount)
+        public override async Task StartSimulation(int ballCount)
         {
             Balls.Clear();
             _logicLayer.AbandonMainLoop();
+            if (mainLoopTask != null)
+            {
+                await mainLoopTask;
+            }
+
             _logicLayer.Start(ballCount, (newBall) =>
             {
                 Balls.Add(new BallModel(newBall));
             });
 
-            _logicLayer.SequentialMainLoop();
+            
+            mainLoopTask = _logicLayer.SequentialMainLoop();
         }
 
         public override void Dispose()

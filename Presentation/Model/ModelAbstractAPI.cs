@@ -12,7 +12,7 @@ namespace Model
 
         public abstract ObservableCollection<BallModel> Balls { get; }
 
-        public abstract void StartSimulation(int ballCount);
+        public abstract Task StartSimulation(int ballCount);
 
         public abstract void Dispose();
     }

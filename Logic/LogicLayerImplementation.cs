@@ -15,6 +15,10 @@ namespace Logic
 
         private ObservableCollection<IBall> balls { get; }
 
+        /// <summary>
+        /// CancellationTokenSource used to signal the main loop to stop.
+        /// Called when AbandonMainLoop is called or when the object is disposed.
+        /// </summary>
         private CancellationTokenSource? tokenSource;
 
         public LogicLayerImplementation() : this(null) { }
@@ -45,6 +49,10 @@ namespace Logic
             layerUnderneathAPI.Start(ballCount, registerBallWithUpperLayerHandler);
         }
 
+        /// <summary>
+        /// Executes the application's main loop, updating the underlying layer at a fixed frame rate.
+        /// </summary>
+        /// <returns>A task that represents the asynchronous operation of the main loop.</returns>
         public override async Task SequentialMainLoop()
         {
             tokenSource = new CancellationTokenSource();
@@ -69,6 +77,10 @@ namespace Logic
             }
         }
 
+
+        /// <summary>
+        /// If a main loop is currently running, signals it to stop by canceling the associated CancellationTokenSource.
+        /// </summary>
         public override void AbandonMainLoop()
         {
             tokenSource?.Cancel();
