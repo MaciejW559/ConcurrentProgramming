@@ -57,26 +57,34 @@ namespace DataTest
                     receivedBalls.Add(ball);
                 });
 
+                Assert.HasCount(5, receivedBalls, "Lista otrzymanych kul powinna zawierać 5 elementów.");
+
                 var initialPositions = new List<(double X, double Y)>();
                 foreach (var ball in receivedBalls)
                 {
                     initialPositions.Add((ball.X, ball.Y));
+
+                    Assert.IsNotNull(ball.Velocity, "Wektor prędkości kuli nie powinien być nullem.");
+                    Assert.IsTrue(Math.Abs(ball.Velocity.X) > 0 || Math.Abs(ball.Velocity.Y) > 0,
+                        "Prędkość kuli wynosi 0, przez co kula nigdy się nie poruszy.");
                 }
 
-                dataApi.Move(1.0);
+                dataApi.Move(10.0);
 
                 bool anyMoved = false;
                 for (int i = 0; i < receivedBalls.Count; i++)
                 {
-                    if (receivedBalls[i].X != initialPositions[i].X ||
-                        receivedBalls[i].Y != initialPositions[i].Y)
+                    double diffX = Math.Abs(receivedBalls[i].X - initialPositions[i].X);
+                    double diffY = Math.Abs(receivedBalls[i].Y - initialPositions[i].Y);
+
+                    if (diffX > 0.0001 || diffY > 0.0001)
                     {
                         anyMoved = true;
                         break;
                     }
                 }
 
-                Assert.IsTrue(anyMoved, "Zadna z kul nie zmieniła swojej pozycji po wywołaniu metody Move.");
+                Assert.IsTrue(anyMoved, "Żadna z kul nie zmieniła swojej pozycji po wywołaniu metody Move. Wartości X i Y pozostały identyczne.");
             }
         }
     }

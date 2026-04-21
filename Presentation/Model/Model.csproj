@@ -11,4 +11,7 @@
     <ProjectReference Include="..\..\Logic\Logic.csproj" />
   </ItemGroup>
 
+	<ItemGroup>
+		<InternalsVisibleTo Include="ModelTest" />
+	</ItemGroup>
 </Project>

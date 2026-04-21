@@ -28,6 +28,12 @@ namespace ViewModel
             StartCommand = new RelayCommand(StartSimulation);
         }
 
+        public MainViewModel(ModelAbstractAPI modelLayer)
+        {
+            _modelLayer = modelLayer;
+            StartCommand = new RelayCommand(StartSimulation);
+        }
+
         private void StartSimulation()
         {
             _modelLayer.StartSimulation(BallCount);

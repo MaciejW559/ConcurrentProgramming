@@ -17,7 +17,6 @@ namespace Model
         public BallModel(IBall ball)
         {
             _ball = ball;
-            // Assuming the aspect ratio is maintained, we can use RADIUS_X for both dimensions.
             Diameter = ball.RADIUS_Y * 2.0 * ModelAbstractAPI.DEFAULT_HEIGHT;
 
             _ball.PropertyChanged += OnPositionChanged;

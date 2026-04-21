@@ -12,6 +12,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Data\Data.csproj" />
+    <ProjectReference Include="..\Logic\Logic.csproj" />
+    <ProjectReference Include="..\Presentation\Model\Model.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Using Include="Microsoft.VisualStudio.TestTools.UnitTesting" />
   </ItemGroup>
 

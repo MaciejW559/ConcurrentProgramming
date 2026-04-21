@@ -39,7 +39,7 @@
 
         protected virtual void Dispose(bool disposing)
         {
-            ObjectDisposedException.ThrowIf(disposed, this);
+            if (disposed) return;
             if (disposing)
             {
                 balls.Clear();
