@@ -76,25 +76,23 @@ namespace Data
         /// <param name="deltaTime"></param>
         public void Move(double deltaTime)
         {
-            double newX = x + SIMULATION_ROOM_ASPECT_RATIO * Velocity.X * deltaTime;
-            double newY = y + Velocity.Y * deltaTime;
+            x = x + SIMULATION_ROOM_ASPECT_RATIO * Velocity.X * deltaTime;
+            y = y + Velocity.Y * deltaTime;
 
-            while (!IsInBoundsX(newX))
+            while (!IsInBoundsX(x))
             {
                 Velocity.FlipX();
-                if (newX < RADIUS) newX = 2 * RADIUS - newX;
-                else newX = 2 * SIMULATION_ROOM_ASPECT_RATIO - 2 * RADIUS - newX;
+                if (x < RADIUS) MirrorAlongStraight(1, 0, -RADIUS / SIMULATION_ROOM_ASPECT_RATIO);
+                else MirrorAlongStraight(1, 0, -1 + RADIUS / SIMULATION_ROOM_ASPECT_RATIO);
             }
 
-            while (!IsInBoundsY(newY))
+            while (!IsInBoundsY(y))
             {
                 Velocity.FlipY();
-                if (newY < RADIUS) newY = 2 * RADIUS - newY;
-                else newY = 2 - 2 * RADIUS - newY;
+                if (y < RADIUS) MirrorAlongStraight(0, 1, -RADIUS);
+                else MirrorAlongStraight(0, 1, -1 + RADIUS);
             }
 
-            x = newX;
-            y = newY;
             OnPropertyChanged(nameof(X));
             OnPropertyChanged(nameof(Y));
         }
@@ -104,8 +102,27 @@ namespace Data
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
 
+        /// <summary>
+        /// Mirror the balls position along the straight ax + by + c = 0
+        /// In the normalized scale [0, 1], meaning right wall is 1x + 0y = 1
+        /// </summary>
+        /// <param name="a">Coefficient next to x</param>
+        /// <param name="b">Coefficient next to y</param>
+        /// <param name="c">Free term</param>
+        private void MirrorAlongStraight(double a, double b, double c)
+        {
+            a /= SIMULATION_ROOM_ASPECT_RATIO;
+            double cPrim = -b * x + a * y;
 
-        
+            double a2B2 = a * a + b * b;
+            
+            double mirrorPointX = (-b * cPrim - a * c) / a2B2;
+            double mirrorPointY = (-b * c + a * cPrim) / a2B2;
+
+            x = 2 * mirrorPointX - x;
+            y = 2 * mirrorPointY - y;
+
+        }
 
 
         private bool IsInBoundsX(double coordinate)
