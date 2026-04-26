@@ -44,7 +44,6 @@ namespace Data
         double X { get; init; }
         double Y { get; init; }
 
-        double RADIUS_Y { get; }
-        double RADIUS_X { get; }
+        double RADIUS { get; }
     }
 }
