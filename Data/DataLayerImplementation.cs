@@ -4,19 +4,19 @@
     {
         private bool disposed = false;
         private Random random = new Random();
-        private List<Ball> balls = new List<Ball>();
+        private List<DataBall> balls = new List<DataBall>();
 
         public DataLayerImplementation()
         {
         }
 
 
-        public override void Start(int ballCount, Action<IBall> upperLayerHandler)
+        public override void Start(int ballCount, Action<IDataBall> upperLayerHandler)
         {
             ObjectDisposedException.ThrowIf(disposed, this);
             for (int i = 0; i < ballCount; i++)
             {
-                Ball ball = new Ball(random);
+                DataBall ball = new DataBall(random);
 
                 upperLayerHandler(ball);
                 balls.Add(ball);
@@ -24,13 +24,7 @@
         }
 
 
-        public override void Move(double deltaTime)
-        {
-            foreach (var ball in balls)
-            {
-                ball.Move(deltaTime);
-            }
-        }
+        
         public override void Dispose()
         {
             Dispose(true);

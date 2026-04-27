@@ -13,7 +13,7 @@ namespace Logic
         LayerUnderneathAPI layerUnderneathAPI;
         private bool disposed = false;
 
-        private ObservableCollection<IBall> balls { get; }
+        private ObservableCollection<LogicBall> balls { get; }
 
         /// <summary>
         /// CancellationTokenSource used to signal the main loop to stop.
@@ -27,7 +27,7 @@ namespace Logic
         public LogicLayerImplementation(LayerUnderneathAPI? layerUnderneathAPI)
         {
             this.layerUnderneathAPI = layerUnderneathAPI == null ? LayerUnderneathAPI.GetDataLayer() : layerUnderneathAPI;
-            balls = new ObservableCollection<IBall>();
+            balls = new ObservableCollection<LogicBall>();
 
         }
 
@@ -40,10 +40,11 @@ namespace Logic
                 throw new ArgumentException("Can't initialize a simulation with a negative number of balls.");
             }
 
-            Action<IBall> registerBallWithUpperLayerHandler = (ball) =>
+            Action<IDataBall> registerBallWithUpperLayerHandler = (ball) =>
             {
-                balls.Add(ball);
-                upperLayerHandler(ball);
+                LogicBall logicBall = new LogicBall(ball);
+                balls.Add(logicBall);
+                upperLayerHandler(logicBall);
             };
             
             layerUnderneathAPI.Start(ballCount, registerBallWithUpperLayerHandler);
@@ -68,12 +69,20 @@ namespace Logic
                     var elapsed = Stopwatch.GetElapsedTime(timestamp);
                     timestamp = Stopwatch.GetTimestamp();
 
-                    layerUnderneathAPI.Move(elapsed.TotalSeconds);
+                    Move(elapsed.TotalSeconds);
                 }
             }
             catch (OperationCanceledException)
             {
                 // expected, token triggered cancellation
+            }
+        }
+
+        public override void Move(double deltaTime)
+        {
+            foreach (var ball in balls)
+            {
+                ball.Move(deltaTime);
             }
         }
 

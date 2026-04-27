@@ -12,22 +12,17 @@ namespace LogicTest
         private class FakeDataApi : DataAbstractAPI
         {
             public int StartedBallsCount { get; private set; } = 0;
-            public int MoveCallCount { get; private set; } = 0;
             public bool IsDisposed { get; private set; } = false;
 
-            public override void Start(int ballCount, Action<IBall> upperLayerHandler)
+            public override void Start(int ballCount, Action<IDataBall> upperLayerHandler)
             {
                 StartedBallsCount = ballCount;
                 for (int i = 0; i < ballCount; i++)
                 {
-                    upperLayerHandler(null!);
+                    upperLayerHandler(new DataBall());
                 }
             }
 
-            public override void Move(double deltaTime)
-            {
-                MoveCallCount++;
-            }
 
             public override void Dispose()
             {
@@ -54,12 +49,19 @@ namespace LogicTest
             var fakeData = new FakeDataApi();
             using var logicLayer = new LogicLayerImplementation(fakeData);
 
+            IBall singularBall = null!;
+            logicLayer.Start(1, (ball) => { singularBall = ball; });
+            int moves = 0;
+
+            Assert.IsNotNull(singularBall, "Handler powinien zostać wywołany i przekazać utworzoną kulę.");
+            singularBall.PropertyChanged += (s, e) => { if (e.PropertyName == nameof(IBall.X) || e.PropertyName == nameof(IBall.Y)) moves++; };
+
             var loopTask = logicLayer.SequentialMainLoop();
 
             await Task.Delay(150);
 
             Assert.IsFalse(loopTask.IsCompleted, "Zadanie pętli głównej powinno działać w tle i nie blokować wątku.");
-            Assert.IsTrue(fakeData.MoveCallCount > 0, "Warstwa danych powinna zostać wywołana (Move) przynajmniej raz w trakcie działania pętli.");
+            Assert.IsGreaterThan(0, moves, "Kulka powinna wysłać powiadomienie o swoim przemieszczeniu przynajmniej raz w trakcie działania pętli.");
 
             logicLayer.AbandonMainLoop();
 

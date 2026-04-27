@@ -20,6 +20,7 @@ namespace ModelTest
             public double Y { get; init; } = 10.0;
 
             public double RADIUS { get; } = 10.0;
+            public double WEIGHT { get; } = 10.0;
 
             public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -43,6 +44,8 @@ namespace ModelTest
             }
 
             public override Task SequentialMainLoop() => Task.CompletedTask;
+
+            public override void Move(double _deltaTime) { }
             public override void AbandonMainLoop() { }
             public override void Dispose() { }
         }
