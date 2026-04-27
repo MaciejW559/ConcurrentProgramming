@@ -118,5 +118,23 @@ namespace LogicTest
             Assert.AreEqual(2, calls);
         }
 
+
+        [TestMethod]
+        public void Many_Bounces_Test()
+        {
+            var ball = new DataBall(new Random());
+            var logicBall = new LogicBall(ball);
+
+            // should bounce off at least a couple of walls
+            logicBall.Move(10000.0);
+
+            double bottomWall = 1.0 - ball.RADIUS;
+            double topWall = ball.RADIUS;
+            double rightWall = 1.0 - ball.RADIUS * _inverseAspectRatio;
+            double leftWall = ball.RADIUS * _inverseAspectRatio;
+            Assert.IsTrue(logicBall.X >= leftWall && logicBall.X <= rightWall, "X coordinate is out of bounds after many bounces.");
+            Assert.IsTrue(logicBall.Y >= topWall && logicBall.Y <= bottomWall, "Y coordinate is out of bounds after many bounces.");
+
+        }
     }
 }

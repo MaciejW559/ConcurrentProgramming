@@ -4,6 +4,7 @@ using Data;
 
 namespace Logic
 {
+
     internal class LogicBall : IBall
     {
         private static readonly double INVERSE_ASPECT_RATIO = 1.0 / DataAbstractAPI.SIMULATION_ROOM_ASPECT_RATIO;
@@ -15,11 +16,17 @@ namespace Logic
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public double X => _dataBall.X;
-        public double Y => _dataBall.Y;
+        /// <summary>
+        /// Intentionally separate from the underlying DataBall,
+        /// to avoid race conditions which could happen if properties were read
+        /// while the DataBall and LogicBall were in the middle of figuring out multiple bounces.
+        /// </summary>
+        public double X { get; private set; }
+        public double Y { get; private set; }
+        public IVector Velocity { get; private set; }
+
         public double RADIUS => _dataBall.RADIUS;
         public double WEIGHT => _dataBall.WEIGHT;
-        public IVector Velocity => _dataBall.Velocity;
 
 
         private readonly IDataBall _dataBall;
@@ -33,10 +40,13 @@ namespace Logic
             _top = RADIUS;
             _bottom = 1 - _top;
 
+            // if it helps VS not recognizing the same damn line is in UpdatePropertiesFromDataBall and raising "fied not initialized" warning, then so be it
+            Velocity = _dataBall.Velocity;
+            UpdatePropertiesFromDataBall();
+
             if (!IsInBoundsX(dataBall.X)) throw new ArgumentException("Initial Databall position out of bounds");
             if (!IsInBoundsY(dataBall.Y)) throw new ArgumentException("Initial Databall position out of bounds");
-            
-            
+
 
             _dataBall.PropertyChanged += DataBall_PropertyChanged;
         }
@@ -45,20 +55,21 @@ namespace Logic
         {
             if (e.PropertyName != null) return;
 
-            if (!IsInBoundsX(X))
+            if (!IsInBoundsX(_dataBall.X))
             {
-                if (X < _left) _dataBall.MirrorAlongStraight(-1, 0, _left);
+                if (_dataBall.X < _left) _dataBall.MirrorAlongStraight(-1, 0, _left);
                 else _dataBall.MirrorAlongStraight(-1, 0, _right);
                 return;
             }
 
-            if (!IsInBoundsY(Y))
+            if (!IsInBoundsY(_dataBall.Y))
             {
-                if (Y < _top) _dataBall.MirrorAlongStraight(0, -1, _top);
+                if (_dataBall.Y < _top) _dataBall.MirrorAlongStraight(0, -1, _top);
                 else _dataBall.MirrorAlongStraight(0, -1, _bottom);
                 return;
             }
 
+            UpdatePropertiesFromDataBall();
             OnPropertyChanged(nameof(X));
             OnPropertyChanged(nameof(Y));
         }
@@ -95,6 +106,13 @@ namespace Logic
             if (coordinate > _bottom) return false;
             if (coordinate < _top) return false;
             return true;
+        }
+
+        private void UpdatePropertiesFromDataBall()
+        {
+            Velocity = _dataBall.Velocity;
+            X = _dataBall.X;
+            Y = _dataBall.Y;
         }
     }
 }
