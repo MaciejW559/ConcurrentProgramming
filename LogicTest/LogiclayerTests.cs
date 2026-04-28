@@ -1,8 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Logic;
+﻿using Logic;
 using Data;
-using System;
-using System.Threading.Tasks;
 
 namespace LogicTest
 {

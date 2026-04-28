@@ -8,8 +8,6 @@ namespace Model
         public static double DEFAULT_WIDTH = 560;
         public static double DEFAULT_HEIGHT = 420;
 
-        public static ModelAbstractAPI CreateApi() => new ModelLayer();
-
         public abstract ObservableCollection<BallModel> Balls { get; }
 
         public abstract Task StartSimulation(int ballCount);

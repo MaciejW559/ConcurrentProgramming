@@ -1,6 +1,6 @@
 ﻿namespace Data
 {
-    internal class DataLayerImplementation : DataAbstractAPI
+    public class DataLayerImplementation : DataAbstractAPI
     {
         private bool disposed = false;
         private Random random = new Random();

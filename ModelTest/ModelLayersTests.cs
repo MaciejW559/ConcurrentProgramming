@@ -1,11 +1,7 @@
 ﻿using Data;
 using Logic;
 using Model;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
 using System.ComponentModel;
-using System.Numerics;
-using System.Threading.Tasks;
 
 namespace ModelTest
 {
@@ -56,7 +52,7 @@ namespace ModelTest
             var fakeLogic = new FakeLogicApi();
             using var modelLayer = new ModelLayer(fakeLogic);
 
-            modelLayer.StartSimulation(3);
+            _ = modelLayer.StartSimulation(3);
 
             Assert.AreEqual(3, fakeLogic.StartedBallCount, "Model powinien przekazać poprawną liczbę kul do logiki.");
             Assert.HasCount(3, modelLayer.Balls, "Model powinien utworzyć BallModel dla każdej otrzymanej kuli.");

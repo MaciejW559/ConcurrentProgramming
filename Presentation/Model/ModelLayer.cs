@@ -7,17 +7,13 @@ namespace Model
     {
         private readonly LogicAbstractAPI _logicLayer;
         private Task? mainLoopTask;
-        public override ObservableCollection<BallModel> Balls { get; } = new ObservableCollection<BallModel>();
-
-        public ModelLayer()
-        {
-            _logicLayer = LogicAbstractAPI.GetLogicLayer();
-        }
+        public override ObservableCollection<BallModel> Balls { get; } = [];
 
         public ModelLayer(LogicAbstractAPI logicLayer)
         {
             _logicLayer = logicLayer;
         }
+
 
         public override async Task StartSimulation(int ballCount)
         {

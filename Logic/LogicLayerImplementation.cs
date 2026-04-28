@@ -3,14 +3,13 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using Data;
-using LayerUnderneathAPI = Data.DataAbstractAPI;
 
 namespace Logic
 {
-    internal class LogicLayerImplementation : LogicAbstractAPI
+    public class LogicLayerImplementation : LogicAbstractAPI
     {
 
-        LayerUnderneathAPI layerUnderneathAPI;
+        DataAbstractAPI layerUnderneathAPI;
         private bool disposed = false;
 
         private ObservableCollection<LogicBall> balls { get; }
@@ -21,12 +20,11 @@ namespace Logic
         /// </summary>
         private CancellationTokenSource? tokenSource;
 
-        public LogicLayerImplementation() : this(null) { }
 
 
-        public LogicLayerImplementation(LayerUnderneathAPI? layerUnderneathAPI)
+        public LogicLayerImplementation(DataAbstractAPI layerUnderneathAPI)
         {
-            this.layerUnderneathAPI = layerUnderneathAPI == null ? LayerUnderneathAPI.GetDataLayer() : layerUnderneathAPI;
+            this.layerUnderneathAPI = layerUnderneathAPI;
             balls = new ObservableCollection<LogicBall>();
 
         }

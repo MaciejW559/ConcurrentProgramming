@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Windows.Input;
+using Logic;
 using Model;
 
 namespace ViewModel
@@ -24,7 +25,11 @@ namespace ViewModel
 
         public MainViewModel()
         {
-            _modelLayer = ModelAbstractAPI.CreateApi();
+            _modelLayer = new ModelLayer(
+                new LogicLayerImplementation(
+                    new Data.DataLayerImplementation()
+                )
+            );
             StartCommand = new RelayCommand(StartSimulation);
         }
 
