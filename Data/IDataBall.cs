@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿namespace Data;
 
-namespace Data
+public interface IDataBall : IBall
 {
-    public interface IDataBall : IBall
-    {
-        void MirrorAlongStraight(double a, double b, double c);
 
-        void Move(double deltaTime);
-    }
+    void Update(IVector? newPosition, IVector? newVelocity);
 }

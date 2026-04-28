@@ -78,7 +78,7 @@ namespace Logic
         {
             foreach (var ball in balls)
             {
-                ball.Move(deltaTime);
+                ball.Move(deltaTime, balls);
             }
         }
 

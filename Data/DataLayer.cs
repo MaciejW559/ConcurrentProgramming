@@ -4,7 +4,7 @@
     {
         private bool disposed = false;
         private readonly Random random = new Random();
-        private readonly List<DataBall> balls = [];
+        private readonly List<DataBall> balls = []; // TODO delete this, unused
 
         public DataLayer()
         {
