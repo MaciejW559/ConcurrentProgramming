@@ -2,7 +2,7 @@
 
 namespace Logic
 {
-    public interface ILogic : IDisposable
+    public interface ILogic
     {
         protected static readonly double FPS = 60;
 

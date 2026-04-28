@@ -8,13 +8,12 @@ namespace Logic
     {
 
         IData layerUnderneathAPI;
-        private bool disposed = false;
 
         private ObservableCollection<LogicBall> balls { get; }
 
         /// <summary>
         /// CancellationTokenSource used to signal the main loop to stop.
-        /// Called when AbandonMainLoop is called or when the object is disposed.
+        /// Called when AbandonMainLoop is called
         /// </summary>
         private CancellationTokenSource? tokenSource;
 
@@ -30,7 +29,6 @@ namespace Logic
 
         public  void Start(int ballCount, Action<IBall> upperLayerHandler)
         {
-            ObjectDisposedException.ThrowIf(disposed, this);
             if (ballCount < 0)
             {
                 throw new ArgumentException("Can't initialize a simulation with a negative number of balls.");
@@ -89,29 +87,6 @@ namespace Logic
         public  void AbandonMainLoop()
         {
             tokenSource?.Cancel();
-        }
-
-
-        public  void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-
-           
-            ObjectDisposedException.ThrowIf(disposed, this);
-            if (disposing)
-            {
-                tokenSource?.Cancel();
-
-                layerUnderneathAPI.Dispose();
-
-                tokenSource?.Dispose();
-            }
-            disposed = true;
         }
     }
 }

@@ -32,10 +32,5 @@ namespace Model
             
             mainLoopTask = _logicLayer.SequentialMainLoop();
         }
-
-        public void Dispose()
-        {
-            _logicLayer.Dispose();
-        }
     }
 }
