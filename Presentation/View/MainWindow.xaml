@@ -2,7 +2,6 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:vm="clr-namespace:ViewModel;assembly=ViewModel"
-        xmlns:model="clr-namespace:Model;assembly=Model"
         Title="Symulator Kul" 
         Width="960" Height="540" 
         ResizeMode="CanResize"
@@ -21,7 +20,8 @@
 
         <Viewbox Grid.Column="1" Stretch="Uniform">
             <Border
-                Width="{x:Static model:ModelAbstractAPI.DEFAULT_WIDTH}" Height="{x:Static model:ModelAbstractAPI.DEFAULT_HEIGHT}"
+                Width="{Binding DEFAULT_WIDTH}"
+                Height="{Binding DEFAULT_HEIGHT}"
                 BorderBrush="Black" BorderThickness="2" 
                 HorizontalAlignment="Center" VerticalAlignment="Center">
                 <ItemsControl ItemsSource="{Binding Balls}">

@@ -1,31 +1,30 @@
 ﻿namespace Data
 {
-    public class DataLayerImplementation : DataAbstractAPI
+    public class DataLayer : IData
     {
         private bool disposed = false;
-        private Random random = new Random();
-        private List<DataBall> balls = new List<DataBall>();
+        private readonly Random random = new Random();
+        private readonly List<DataBall> balls = [];
 
-        public DataLayerImplementation()
+        public DataLayer()
         {
         }
 
 
-        public override void Start(int ballCount, Action<IDataBall> upperLayerHandler)
+        public void Start(int ballCount, Action<IDataBall> upperLayerHandler)
         {
             ObjectDisposedException.ThrowIf(disposed, this);
             for (int i = 0; i < ballCount; i++)
             {
-                DataBall ball = new DataBall(random);
+                DataBall ball = new(random);
 
                 upperLayerHandler(ball);
                 balls.Add(ball);
             }
         }
 
-
         
-        public override void Dispose()
+        public void Dispose()
         {
             Dispose(true);
             GC.SuppressFinalize(this);

@@ -7,7 +7,7 @@ namespace Logic
 
     internal class LogicBall : IBall
     {
-        private static readonly double INVERSE_ASPECT_RATIO = 1.0 / DataAbstractAPI.SIMULATION_ROOM_ASPECT_RATIO;
+        private static readonly double INVERSE_ASPECT_RATIO = 1.0 / IData.SIMULATION_ROOM_ASPECT_RATIO;
         private readonly double _left;
         private readonly double _right;
         private readonly double _top;

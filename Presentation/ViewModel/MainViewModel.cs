@@ -7,7 +7,9 @@ namespace ViewModel
 {
     public class MainViewModel : ViewModelBase
     {
-        private readonly ModelAbstractAPI _modelLayer;
+        private readonly IModel _modelLayer;
+        public static double DEFAULT_WIDTH => IModel.DEFAULT_WIDTH;
+        public static double DEFAULT_HEIGHT => IModel.DEFAULT_HEIGHT;
         private int _ballCount = 5;
 
         public ObservableCollection<BallModel> Balls => _modelLayer.Balls;
@@ -26,14 +28,14 @@ namespace ViewModel
         public MainViewModel()
         {
             _modelLayer = new ModelLayer(
-                new LogicLayerImplementation(
-                    new Data.DataLayerImplementation()
+                new LogicLayer(
+                    new Data.DataLayer()
                 )
             );
             StartCommand = new RelayCommand(StartSimulation);
         }
 
-        public MainViewModel(ModelAbstractAPI modelLayer)
+        public MainViewModel(IModel modelLayer)
         {
             _modelLayer = modelLayer;
             StartCommand = new RelayCommand(StartSimulation);

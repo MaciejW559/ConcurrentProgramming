@@ -26,7 +26,7 @@ namespace ModelTest
             }
         }
 
-        private class FakeLogicApi : LogicAbstractAPI
+        private class FakeLogicApi : ILogic
         {
             public int StartedBallCount { get; private set; } = 0;
 

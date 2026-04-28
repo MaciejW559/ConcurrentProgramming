@@ -10,7 +10,7 @@ namespace Data
     /// </summary>
     public class DataBall : IDataBall
     {
-        private static readonly double INVERSE_ASPECT_RATIO = 1.0 / DataAbstractAPI.SIMULATION_ROOM_ASPECT_RATIO;
+        private static readonly double INVERSE_ASPECT_RATIO = 1.0 / IData.SIMULATION_ROOM_ASPECT_RATIO;
 
 
         /// <summary>
@@ -29,7 +29,7 @@ namespace Data
         public double X
         {
             get => x * INVERSE_ASPECT_RATIO;
-            init => x = value * DataAbstractAPI.SIMULATION_ROOM_ASPECT_RATIO;
+            init => x = value * IData.SIMULATION_ROOM_ASPECT_RATIO;
         }
 
         /// <summary>
@@ -107,7 +107,7 @@ namespace Data
         /// <param name="deltaTime"></param>
         public void Move(double deltaTime)
         {
-            x += DataAbstractAPI.SIMULATION_ROOM_ASPECT_RATIO * velocity.X * deltaTime;
+            x += IData.SIMULATION_ROOM_ASPECT_RATIO * velocity.X * deltaTime;
             y += velocity.Y * deltaTime;
 
             OnPropertyChanged(null);

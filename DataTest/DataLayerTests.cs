@@ -8,7 +8,7 @@ namespace DataTest
         [TestMethod]
         public void Start_ShouldCreateCorrectNumberOfBalls()
         {
-            using DataAbstractAPI dataApi = new DataLayerImplementation();
+            using IData dataApi = new DataLayer();
             int receivedBallsCount = 0;
 
             dataApi.Start(12, (ball) =>
@@ -22,7 +22,7 @@ namespace DataTest
         [TestMethod]
         public void Start_ShouldCreateBallsWithinBounds()
         {
-            using DataAbstractAPI dataApi = new DataLayerImplementation();
+            using IData dataApi = new DataLayer();
             List<IBall> receivedBalls = [];
 
             dataApi.Start(10, (ball) =>

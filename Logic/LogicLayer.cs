@@ -1,15 +1,13 @@
 ﻿using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Diagnostics;
-using System.Runtime.CompilerServices;
 using Data;
 
 namespace Logic
 {
-    public class LogicLayerImplementation : LogicAbstractAPI
+    public class LogicLayer : ILogic
     {
 
-        DataAbstractAPI layerUnderneathAPI;
+        IData layerUnderneathAPI;
         private bool disposed = false;
 
         private ObservableCollection<LogicBall> balls { get; }
@@ -22,7 +20,7 @@ namespace Logic
 
 
 
-        public LogicLayerImplementation(DataAbstractAPI layerUnderneathAPI)
+        public LogicLayer(IData layerUnderneathAPI)
         {
             this.layerUnderneathAPI = layerUnderneathAPI;
             balls = new ObservableCollection<LogicBall>();
@@ -30,7 +28,7 @@ namespace Logic
         }
 
 
-        public override void Start(int ballCount, Action<IBall> upperLayerHandler)
+        public  void Start(int ballCount, Action<IBall> upperLayerHandler)
         {
             ObjectDisposedException.ThrowIf(disposed, this);
             if (ballCount < 0)
@@ -52,12 +50,12 @@ namespace Logic
         /// Executes the application's main loop, updating the underlying layer at a fixed frame rate.
         /// </summary>
         /// <returns>A task that represents the asynchronous operation of the main loop.</returns>
-        public override async Task SequentialMainLoop()
+        public  async Task SequentialMainLoop()
         {
             tokenSource = new CancellationTokenSource();
             CancellationToken token = tokenSource.Token;
 
-            using var timer = new PeriodicTimer(TimeSpan.FromSeconds(1.0 / FPS));
+            using var timer = new PeriodicTimer(TimeSpan.FromSeconds(1.0 / ILogic.FPS));
             var timestamp = Stopwatch.GetTimestamp();
 
             try
@@ -76,7 +74,7 @@ namespace Logic
             }
         }
 
-        public override void Move(double deltaTime)
+        public  void Move(double deltaTime)
         {
             foreach (var ball in balls)
             {
@@ -88,13 +86,13 @@ namespace Logic
         /// <summary>
         /// If a main loop is currently running, signals it to stop by canceling the associated CancellationTokenSource.
         /// </summary>
-        public override void AbandonMainLoop()
+        public  void AbandonMainLoop()
         {
             tokenSource?.Cancel();
         }
 
 
-        public override void Dispose()
+        public  void Dispose()
         {
             Dispose(true);
             GC.SuppressFinalize(this);

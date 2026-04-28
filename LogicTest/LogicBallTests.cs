@@ -36,7 +36,7 @@ namespace LogicTest
 
         }
 
-        private readonly double _inverseAspectRatio = 1.0 / DataAbstractAPI.SIMULATION_ROOM_ASPECT_RATIO;
+        private readonly double _inverseAspectRatio = 1.0 / IData.SIMULATION_ROOM_ASPECT_RATIO;
 
         [TestMethod]
         public void Ball_Bounce_Left_Wall_Test()

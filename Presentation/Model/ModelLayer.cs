@@ -3,19 +3,19 @@ using Logic;
 
 namespace Model
 {
-    public class ModelLayer : ModelAbstractAPI
+    public class ModelLayer : IModel
     {
-        private readonly LogicAbstractAPI _logicLayer;
+        private readonly ILogic _logicLayer;
         private Task? mainLoopTask;
-        public override ObservableCollection<BallModel> Balls { get; } = [];
+        public ObservableCollection<BallModel> Balls { get; } = [];
 
-        public ModelLayer(LogicAbstractAPI logicLayer)
+        public ModelLayer(ILogic logicLayer)
         {
             _logicLayer = logicLayer;
         }
 
 
-        public override async Task StartSimulation(int ballCount)
+        public async Task StartSimulation(int ballCount)
         {
             Balls.Clear();
             _logicLayer.AbandonMainLoop();
@@ -33,7 +33,7 @@ namespace Model
             mainLoopTask = _logicLayer.SequentialMainLoop();
         }
 
-        public override void Dispose()
+        public void Dispose()
         {
             _logicLayer.Dispose();
         }

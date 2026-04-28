@@ -6,7 +6,7 @@ namespace LogicTest
     [TestClass]
     public class LogicLayerTests
     {
-        private class FakeDataApi : DataAbstractAPI
+        private class FakeDataApi : IData
         {
             public int StartedBallsCount { get; private set; } = 0;
             public bool IsDisposed { get; private set; } = false;
@@ -31,7 +31,7 @@ namespace LogicTest
         public void Start_ShouldInitializeBallsAndInvokeHandler()
         {
             var fakeData = new FakeDataApi();
-            using var logicLayer = new LogicLayerImplementation(fakeData);
+            using var logicLayer = new LogicLayer(fakeData);
             int receivedBalls = 0;
 
             logicLayer.Start(5, (ball) => { receivedBalls++; });
@@ -44,7 +44,7 @@ namespace LogicTest
         public async Task SequentialMainLoop_ShouldRunAsynchronouslyAndCanBeAbandoned()
         {
             var fakeData = new FakeDataApi();
-            using var logicLayer = new LogicLayerImplementation(fakeData);
+            using var logicLayer = new LogicLayer(fakeData);
 
             IBall singularBall = null!;
             logicLayer.Start(1, (ball) => { singularBall = ball; });
@@ -71,7 +71,7 @@ namespace LogicTest
         public void Dispose_ShouldDisposeDataLayerAndCancelLoop()
         {
             var fakeData = new FakeDataApi();
-            var logicLayer = new LogicLayerImplementation(fakeData);
+            var logicLayer = new LogicLayer(fakeData);
 
             logicLayer.Dispose();
 

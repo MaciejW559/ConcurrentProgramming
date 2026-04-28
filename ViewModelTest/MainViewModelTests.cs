@@ -8,7 +8,7 @@ namespace ViewModelTest
     [TestClass]
     public class MainViewModelTests
     {
-        private class FakeModelApi : ModelAbstractAPI
+        private class FakeModelApi : IModel
         {
             public int StartedSimulationBallCount { get; private set; } = 0;
             public override ObservableCollection<BallModel> Balls { get; } = new ObservableCollection<BallModel>();

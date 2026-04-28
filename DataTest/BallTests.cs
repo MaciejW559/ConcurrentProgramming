@@ -61,7 +61,7 @@ namespace DataTest
 
 
             // manually mirror the ball as if it hit the right wall, which is at x = 1 - RADIUS / ASPECT_RATIO
-            ball.MirrorAlongStraight(-1, 0, 1 - ball.RADIUS / DataAbstractAPI.SIMULATION_ROOM_ASPECT_RATIO);
+            ball.MirrorAlongStraight(-1, 0, 1 - ball.RADIUS / IData.SIMULATION_ROOM_ASPECT_RATIO);
 
             Assert.AreEqual(0.905, ball.X, 0.0001, "The X position is incorrect after bouncing off the right wall.");
             Assert.AreEqual(-0.15, ball.Velocity.X, 0.0001, "X-axis velocity did not reverse after hitting the wall.");
