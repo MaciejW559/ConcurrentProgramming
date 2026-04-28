@@ -44,7 +44,7 @@ namespace LogicTest
             var ball = new DataBall { X = 0.05, Y = 0.5, Velocity = new Data.Vector { X = -0.1, Y = 0.0 } };
             var logicBall = new LogicBall(ball);
 
-            double leftWall = ball.RADIUS * _inverseAspectRatio;
+            double leftWall = ball.Radius * _inverseAspectRatio;
             double targetX = ball.X + ball.Velocity.X; // 0.05 - 0.1 = -0.05
             double expectedX = leftWall + (leftWall - targetX);
 
@@ -64,7 +64,7 @@ namespace LogicTest
             var ball = new DataBall { X = 0.95, Y = 0.5, Velocity = new Data.Vector { X = 0.1, Y = 0.0 } };
             var logicBall = new LogicBall(ball);
 
-            double rightWall = 1.0 - ball.RADIUS * _inverseAspectRatio;
+            double rightWall = 1.0 - ball.Radius * _inverseAspectRatio;
             double targetX = ball.X + ball.Velocity.X; // 0.95 + 0.1 = 1.05
             double expectedX = rightWall + (rightWall - targetX);
 
@@ -84,7 +84,7 @@ namespace LogicTest
             var ball = new DataBall { X = 0.5, Y = 0.05, Velocity = new Data.Vector { X = 0.0, Y = -0.1 } };
             var logicBall = new LogicBall(ball);
 
-            double topWall = ball.RADIUS;
+            double topWall = ball.Radius;
             double targetY = ball.Y + ball.Velocity.Y; // 0.05 - 0.1 = -0.05
             double expectedY = topWall + (topWall - targetY);
 
@@ -104,7 +104,7 @@ namespace LogicTest
             var ball = new DataBall { X = 0.5, Y = 0.95, Velocity = new Data.Vector { X = 0.0, Y = 0.1 } };
             var logicBall = new LogicBall(ball);
 
-            double bottomWall = 1.0 - ball.RADIUS;
+            double bottomWall = 1.0 - ball.Radius;
             double targetY = ball.Y + ball.Velocity.Y; // 0.95 + 0.1 = 1.05
             double expectedY = bottomWall - (targetY - bottomWall);
 
@@ -128,10 +128,10 @@ namespace LogicTest
             // should bounce off at least a couple of walls
             logicBall.Move(10000.0);
 
-            double bottomWall = 1.0 - ball.RADIUS;
-            double topWall = ball.RADIUS;
-            double rightWall = 1.0 - ball.RADIUS * _inverseAspectRatio;
-            double leftWall = ball.RADIUS * _inverseAspectRatio;
+            double bottomWall = 1.0 - ball.Radius;
+            double topWall = ball.Radius;
+            double rightWall = 1.0 - ball.Radius * _inverseAspectRatio;
+            double leftWall = ball.Radius * _inverseAspectRatio;
             Assert.IsTrue(logicBall.X >= leftWall && logicBall.X <= rightWall, "X coordinate is out of bounds after many bounces.");
             Assert.IsTrue(logicBall.Y >= topWall && logicBall.Y <= bottomWall, "Y coordinate is out of bounds after many bounces.");
 

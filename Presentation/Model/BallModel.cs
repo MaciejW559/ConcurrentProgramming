@@ -17,7 +17,7 @@ namespace Model
         public BallModel(IBall ball)
         {
             _ball = ball;
-            Diameter = ball.RADIUS * 2.0 * IModel.DEFAULT_HEIGHT;
+            Diameter = ball.Radius * 2.0 * IModel.DEFAULT_HEIGHT;
 
             _ball.PropertyChanged += OnPositionChanged;
         }

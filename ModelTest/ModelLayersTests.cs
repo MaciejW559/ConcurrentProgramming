@@ -15,8 +15,8 @@ namespace ModelTest
             public double X { get; init; } = 10.0;
             public double Y { get; init; } = 10.0;
 
-            public double RADIUS { get; } = 10.0;
-            public double WEIGHT { get; } = 10.0;
+            public double Radius { get; } = 10.0;
+            public double Weight { get; } = 10.0;
 
             public event PropertyChangedEventHandler? PropertyChanged;
 

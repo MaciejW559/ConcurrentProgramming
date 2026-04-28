@@ -10,8 +10,8 @@ namespace Data
         double X { get; }
         double Y { get; }
 
-        double RADIUS { get; }
+        double Radius { get; }
 
-        double WEIGHT { get; }
+        double Weight { get; }
     }
 }

@@ -4,7 +4,6 @@ using Data;
 
 namespace Logic
 {
-
     internal class LogicBall : IBall
     {
         private static readonly double INVERSE_ASPECT_RATIO = 1.0 / IData.SIMULATION_ROOM_ASPECT_RATIO;
@@ -25,8 +24,8 @@ namespace Logic
         public double Y { get; private set; }
         public IVector Velocity { get; private set; }
 
-        public double RADIUS => _dataBall.RADIUS;
-        public double WEIGHT => _dataBall.WEIGHT;
+        public double Radius => _dataBall.Radius;
+        public double Weight => _dataBall.Weight;
 
 
         private readonly IDataBall _dataBall;
@@ -34,10 +33,10 @@ namespace Logic
         public LogicBall(IDataBall dataBall) { 
             _dataBall = dataBall;
 
-            _left = RADIUS * INVERSE_ASPECT_RATIO;
+            _left = Radius * INVERSE_ASPECT_RATIO;
             _right = 1 - _left;
 
-            _top = RADIUS;
+            _top = Radius;
             _bottom = 1 - _top;
 
             // if it helps VS not recognizing the same damn line is in UpdatePropertiesFromDataBall and raising "fied not initialized" warning, then so be it

@@ -44,8 +44,8 @@ namespace Data
         /// <summary>
         /// The same scale is used for the radious. Radious of 0.05 means 1/20th of the height of the simulation room
         /// </summary>
-        public double RADIUS => 0.03;
-        public double WEIGHT => 1.0;
+        public double Radius => 0.03;
+        public double Weight => 1.0;
 
 
         /// <summary>
@@ -59,14 +59,14 @@ namespace Data
         /// Velocity.X of 0.5, means the ball will travel half the simulation room in 1s
         /// velocity is a private, mutable Vector
         /// </summary>
-        private Vector velocity { get; init; }
+        private Vector _velocity { get; init; }
 
         /// <summary>
         /// Velocity is the same object cast to the IVector, immutable type
         /// </summary>
         public IVector Velocity { 
-            get => velocity;
-            init => velocity = new Vector() { X = value.X, Y = value.Y }; 
+            get => _velocity;
+            init => _velocity = new Vector() { X = value.X, Y = value.Y }; 
         }
 
         /// <summary>
@@ -80,7 +80,7 @@ namespace Data
         {
             X = 0.5;
             Y = 0.5;
-            velocity = new Vector { X = 0, Y = 0 };
+            _velocity = new Vector { X = 0, Y = 0 };
         }
 
 
@@ -90,10 +90,10 @@ namespace Data
         /// <param name="random"></param>
         public DataBall(Random random)
         {
-            X = RADIUS + (1 - 2 * RADIUS) * random.NextDouble();
-            Y = RADIUS + (1 - 2 * RADIUS) * random.NextDouble();
+            X = Radius + (1 - 2 * Radius) * random.NextDouble();
+            Y = Radius + (1 - 2 * Radius) * random.NextDouble();
 
-            velocity = new Vector
+            _velocity = new Vector
             {
                 X = (random.NextDouble() * 2 - 1) * MAX_RANDOM_VELOCITY * INVERSE_ASPECT_RATIO,
                 Y = (random.NextDouble() * 2 - 1) * MAX_RANDOM_VELOCITY,
@@ -107,8 +107,8 @@ namespace Data
         /// <param name="deltaTime"></param>
         public void Move(double deltaTime)
         {
-            x += IData.SIMULATION_ROOM_ASPECT_RATIO * velocity.X * deltaTime;
-            y += velocity.Y * deltaTime;
+            x += IData.SIMULATION_ROOM_ASPECT_RATIO * _velocity.X * deltaTime;
+            y += _velocity.Y * deltaTime;
 
             OnPropertyChanged(null);
         }
@@ -142,7 +142,7 @@ namespace Data
             y = 2 * mirrorPointY - y;
 
 
-            velocity.MirrorAlongStraight(a, b);
+            _velocity.MirrorAlongStraight(a, b);
 
             OnPropertyChanged(null);
         }
