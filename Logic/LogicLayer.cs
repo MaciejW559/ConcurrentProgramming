@@ -29,6 +29,7 @@ namespace Logic
 
         public  void Start(int ballCount, Action<IBall> upperLayerHandler)
         {
+            balls.Clear();
             if (ballCount < 0)
             {
                 throw new ArgumentException("Can't initialize a simulation with a negative number of balls.");

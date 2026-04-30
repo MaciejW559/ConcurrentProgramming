@@ -103,11 +103,11 @@ internal class Trajectory
 
         }
         // if somehow it is not valid (unsure if possible), use the other
-        else if (collisionT2 >= 0.00001 && collisionT2 <= 1)
-        {
-            if (CouldBallCatchUp(otherBall, radiusSum, collisionT2)) return collisionT2;
-            return -1;
-        }
+        //else if (collisionT2 >= 0.00001 && collisionT2 <= 1)
+        //{
+        //    if (CouldBallCatchUp(otherBall, radiusSum, collisionT2)) return collisionT2;
+        //    return -1;
+        //}
         // both outside of the trajectory segment, so no collision
         return -1;
     }
