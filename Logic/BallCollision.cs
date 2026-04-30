@@ -13,7 +13,7 @@ internal class BallCollision : ICollision
 
     public BallCollision(IDataBall travellingBall, IDataBall stationaryBall, Trajectory trajectory)
     {
-        TPosition = trajectory.CollideWithBall(stationaryBall.X, stationaryBall.Y, stationaryBall.Radius);
+        TPosition = trajectory.CollideWithBall(stationaryBall);
         this.travellingBall = travellingBall;
         this.stationaryBall = stationaryBall;
         Trajectory = trajectory;
@@ -25,14 +25,14 @@ internal class BallCollision : ICollision
     {
         IVector newPos = Trajectory.ProgressTToPoint(TPosition);
 
-        double radiusSum2 = (travellingBall.Radius + stationaryBall.Radius) * (travellingBall.Radius + stationaryBall.Radius);
+        double radiusSum = travellingBall.Radius + stationaryBall.Radius;
         double weightSum = travellingBall.Weight + stationaryBall.Weight;
 
         // normalized from travelling ball towards stationary ball
         Vector normal = new Vector()
         {
-            X = (stationaryBall.X - newPos.X) / radiusSum2,
-            Y = (stationaryBall.Y - newPos.Y) / radiusSum2
+            X = (stationaryBall.X - newPos.X) / radiusSum,
+            Y = (stationaryBall.Y - newPos.Y) / radiusSum
         };
 
 

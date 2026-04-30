@@ -9,9 +9,8 @@ namespace LogicTest
         private class FakeDataApi : IData
         {
             public int StartedBallsCount { get; private set; } = 0;
-            public bool IsDisposed { get; private set; } = false;
 
-            public override void Start(int ballCount, Action<IDataBall> upperLayerHandler)
+            public void Start(int ballCount, Action<IDataBall> upperLayerHandler)
             {
                 StartedBallsCount = ballCount;
                 for (int i = 0; i < ballCount; i++)
@@ -20,18 +19,13 @@ namespace LogicTest
                 }
             }
 
-
-            public override void Dispose()
-            {
-                IsDisposed = true;
-            }
         }
 
         [TestMethod]
         public void Start_ShouldInitializeBallsAndInvokeHandler()
         {
             var fakeData = new FakeDataApi();
-            using var logicLayer = new LogicLayer(fakeData);
+            var logicLayer = new LogicLayer(fakeData);
             int receivedBalls = 0;
 
             logicLayer.Start(5, (ball) => { receivedBalls++; });
@@ -44,7 +38,7 @@ namespace LogicTest
         public async Task SequentialMainLoop_ShouldRunAsynchronouslyAndCanBeAbandoned()
         {
             var fakeData = new FakeDataApi();
-            using var logicLayer = new LogicLayer(fakeData);
+            var logicLayer = new LogicLayer(fakeData);
 
             IBall singularBall = null!;
             logicLayer.Start(1, (ball) => { singularBall = ball; });
@@ -67,15 +61,5 @@ namespace LogicTest
             Assert.IsTrue(loopTask.IsCompleted, "Zadanie powinno zakończyć się po wywołaniu AbandonMainLoop.");
         }
 
-        [TestMethod]
-        public void Dispose_ShouldDisposeDataLayerAndCancelLoop()
-        {
-            var fakeData = new FakeDataApi();
-            var logicLayer = new LogicLayer(fakeData);
-
-            logicLayer.Dispose();
-
-            Assert.IsTrue(fakeData.IsDisposed, "Dispose w warstwie logiki powinno również kaskadowo wywołać Dispose() na niższej warstwie danych.");
-        }
     }
 }

@@ -30,7 +30,7 @@ namespace ModelTest
         {
             public int StartedBallCount { get; private set; } = 0;
 
-            public override void Start(int ballCount, Action<IBall> upperLayerHandler)
+            public void Start(int ballCount, Action<IBall> upperLayerHandler)
             {
                 StartedBallCount = ballCount;
                 for (int i = 0; i < ballCount; i++)
@@ -39,18 +39,17 @@ namespace ModelTest
                 }
             }
 
-            public override Task SequentialMainLoop() => Task.CompletedTask;
+            public Task SequentialMainLoop() => Task.CompletedTask;
 
-            public override void Move(double _deltaTime) { }
-            public override void AbandonMainLoop() { }
-            public override void Dispose() { }
+            public void Move(double _deltaTime) { }
+            public void AbandonMainLoop() { }
         }
 
         [TestMethod]
         public void StartSimulation_ShouldPopulateBallsCollection()
         {
             var fakeLogic = new FakeLogicApi();
-            using var modelLayer = new ModelLayer(fakeLogic);
+            var modelLayer = new ModelLayer(fakeLogic);
 
             _ = modelLayer.StartSimulation(3);
 

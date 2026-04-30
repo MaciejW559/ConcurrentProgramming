@@ -11,15 +11,14 @@ namespace ViewModelTest
         private class FakeModelApi : IModel
         {
             public int StartedSimulationBallCount { get; private set; } = 0;
-            public override ObservableCollection<BallModel> Balls { get; } = new ObservableCollection<BallModel>();
+            public ObservableCollection<BallModel> Balls { get; } = new ObservableCollection<BallModel>();
 
-            public override Task StartSimulation(int ballCount)
+            public Task StartSimulation(int ballCount)
             {
                 StartedSimulationBallCount = ballCount;
                 return Task.CompletedTask;
             }
 
-            public override void Dispose() { }
         }
 
         [TestMethod]

@@ -57,26 +57,26 @@ namespace Data
 
         public DataBall()
         {
-            X = 0.5;
+            X = 0.5 * IData.SIMULATION_ROOM_ASPECT_RATIO;
             Y = 0.5;
             _velocity = new Vector { X = 0, Y = 0 };
         }
 
-      public DataBall(double x, double y, Vector velocity)
+        public DataBall(double x, double y, Vector velocity)
         {
             X = x;
             Y = y;
             _velocity = velocity;
         }
 
-
+        
         /// <summary>
         /// Creates a ball at a random position in the simulation room with a random velocity.
         /// </summary>
         /// <param name="random"></param>
         public DataBall(Random random)
         {
-            X = Radius + (1 - 2 * Radius) * random.NextDouble();
+            X = Radius + (IData.SIMULATION_ROOM_ASPECT_RATIO - 2 * Radius) * random.NextDouble();
             Y = Radius + (1 - 2 * Radius) * random.NextDouble();
 
             _velocity = new Vector

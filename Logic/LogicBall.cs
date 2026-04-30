@@ -39,6 +39,7 @@ namespace Logic
 
 
         private readonly IDataBall _dataBall;
+        private Boolean _midMovement = false;
 
         public LogicBall(IDataBall dataBall) { 
             _dataBall = dataBall;
@@ -55,8 +56,18 @@ namespace Logic
 
             if (!IsInBoundsX(dataBall.X)) throw new ArgumentException("Initial Databall position out of bounds");
             if (!IsInBoundsY(dataBall.Y)) throw new ArgumentException("Initial Databall position out of bounds");
+
+            _dataBall.PropertyChanged += DataBall_PropertyChanged;
         }
 
+
+        private void DataBall_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            if (_midMovement) return;
+            UpdatePropertiesFromDataBall();
+            OnPropertyChanged(nameof(X));
+            OnPropertyChanged(nameof(Y));
+        }
 
         /// <summary>
         /// Move the ball according to its velocity and the time elapsed since the last movement in seconds.
@@ -69,14 +80,12 @@ namespace Logic
         /// <param name="deltaTime"></param>
         public void Move(double deltaTime, Collection<LogicBall> balls)
         {
+            _midMovement = true;
             while (true)
             {
                 Trajectory trajectory = new Trajectory(
-                    _dataBall.X,
-                    _dataBall.Y,
-                    _dataBall.Velocity.X * deltaTime,
-                    _dataBall.Velocity.Y * deltaTime,
-                    Radius
+                    _dataBall,
+                    deltaTime
                 );
 
                 List<ICollision> collisions = [];
@@ -85,13 +94,13 @@ namespace Logic
                 ICollision leftWallCollision = new WallCollision(_dataBall, trajectory, -1, 0, _left);
                 leftWallCollision.AddToListIfColliding(collisions);
 
-                ICollision rightWallCollision = new WallCollision(_dataBall, trajectory, -1, 0, _right);
+                ICollision rightWallCollision = new WallCollision(_dataBall, trajectory, 1, 0, -_right);
                 rightWallCollision.AddToListIfColliding(collisions);
 
                 ICollision topWallCollision = new WallCollision(_dataBall, trajectory, 0, -1, _top);
                 topWallCollision.AddToListIfColliding(collisions);
 
-                ICollision bottomWallCollision = new WallCollision(_dataBall, trajectory, 0, -1, _bottom);
+                ICollision bottomWallCollision = new WallCollision(_dataBall, trajectory, 0, 1, -_bottom);
                 bottomWallCollision.AddToListIfColliding(collisions);
 
 
@@ -116,6 +125,7 @@ namespace Logic
                 deltaTime = deltaTime * (1 - earliestCollision.TPosition);
             }
 
+            _midMovement = false;
             UpdatePropertiesFromDataBall();
             OnPropertyChanged(nameof(X));
             OnPropertyChanged(nameof(Y));

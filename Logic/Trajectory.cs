@@ -8,26 +8,28 @@ namespace Logic;
 /// </summary>
 internal class Trajectory
 {
-    public double StartingX { get; set; }
-    public double StartingY { get; set; }
+    private readonly IBall ball;
 
-    public double EndingX { get; set; }
-    public double EndingY { get; set; }
+    public double StartingX { get; private set; }
+    public double StartingY { get; private set; }
 
-    public double DiffX { get; set; }
-    public double DiffY { get; set; }
+    public double EndingX { get; private set; }
+    public double EndingY { get; private set; }
+    public double DiffX { get; private set; }
+    public double DiffY { get; private set; }
 
-    public double Radious { get; set; }
+    public double Radius { get; private set; }
 
-    public Trajectory(double startingX, double startingY, double diffX, double diffY, double radious)
+    public Trajectory(IBall ball, double deltaTime)
     {
-        StartingX = startingX;
-        StartingY = startingY;
-        DiffX = diffX;
-        DiffY = diffY;
+        StartingX = ball.X;
+        StartingY = ball.Y;
+        DiffX = ball.Velocity.X * deltaTime;
+        DiffY = ball.Velocity.Y * deltaTime;
         EndingX = StartingX + DiffX;
         EndingY = StartingY + DiffY;
-        Radious = radious;
+        Radius = ball.Radius;
+        this.ball = ball;
     }
 
 
@@ -46,9 +48,11 @@ internal class Trajectory
     /// <returns>Progress t along the trajectory from Start to End</returns>
     public double CollideWithHalfPlane(double a, double b, double c)
     {
-        if (a * StartingX + b * StartingY + c > 0)
+        // Not comparing with zero to allow numerical rounding errors to pass
+        // does create edge cases where the value returned by this method could be slightly negative
+        if (a * StartingX + b * StartingY + c > 0.000001)
         {
-            throw new ArgumentException("The trajectory starts in the half-plane, which is an unintended edge case");
+            throw new ArgumentException($"The trajectory starts in the half-plane, which is an unintended edge case. StartingPoint = ({StartingX}, {StartingY}), half plane = ({a}x + {b}y + {c} >= 0)");
         }
 
         if (a * EndingX + b * EndingY + c < 0)
@@ -65,7 +69,7 @@ internal class Trajectory
 
  
 
-    public double CollideWithBall(double otherBallX, double otherBallY, double ballRadious)
+    public double CollideWithBall(IBall otherBall)
     {
         // The trajectory is a straight line, so we can find the distance from the center of the ball to the line,
         // and if it is less than the sum of the ball's radious and the trajectory's radious, then they could collide.
@@ -73,9 +77,9 @@ internal class Trajectory
         double b = -DiffX;
         double c = EndingX * StartingY - StartingX * EndingY;
 
-        double radiusSum = Radious + ballRadious;
+        double radiusSum = Radius + otherBall.Radius;
 
-        double distance = Math.Abs(a * otherBallX + b * otherBallY + c) / Math.Sqrt(a * a + b * b);
+        double distance = Math.Abs(a * otherBall.X + b * otherBall.Y + c) / Math.Sqrt(a * a + b * b);
         if (distance > radiusSum)
         {
             // The trajectory does not collide with the ball at all.
@@ -84,33 +88,60 @@ internal class Trajectory
 
 
         // closest point on the straight extending from the trajectory to the ball
-        double t = (-b * (otherBallX - StartingX)  + a * (otherBallY - StartingY)) / (a * a + b * b);
+        double t = (-b * (otherBall.X - StartingX)  + a * (otherBall.Y - StartingY)) / (a * a + b * b);
 
-        double dt = Math.Sqrt(radiusSum * radiusSum - distance * distance);
+        double dt = Math.Sqrt((radiusSum * radiusSum - distance * distance) / (DiffX * DiffX + DiffY * DiffY));
 
         double collisionT1 = t - dt;
         double collisionT2 = t + dt;
 
         // if the collision point closer to the starting ball position if valid, return it
-        if (collisionT1 >= 0 && collisionT1 <= 1)
+        if (collisionT1 >= 0.00001 && collisionT1 <= 1)
         {
-            return collisionT1;
+            if (CouldBallCatchUp(otherBall, radiusSum, collisionT1)) return collisionT1;
+            return -1;
+
         }
         // if somehow it is not valid (unsure if possible), use the other
-        else if (collisionT2 >= 0 && collisionT2 <= 1)
+        else if (collisionT2 >= 0.00001 && collisionT2 <= 1)
         {
-            return collisionT2;
+            if (CouldBallCatchUp(otherBall, radiusSum, collisionT2)) return collisionT2;
+            return -1;
         }
         // both outside of the trajectory segment, so no collision
         return -1;
+    }
+
+    private bool CouldBallCatchUp(IBall otherBall, double radiusSum, double collisionT)
+    {
+        IVector collisionPoint = ProgressTToPoint(collisionT);
+
+        // normalized from travelling ball towards stationary ball
+        Vector normal = new Vector()
+        {
+            X = (otherBall.X - collisionPoint.X) / radiusSum,
+            Y = (otherBall.Y - collisionPoint.Y) / radiusSum
+        };
+
+
+        double travellingBallVelN = ball.Velocity.Dot(normal);
+        double otherBallVelN = otherBall.Velocity.Dot(normal);
+
+        // travelling ball is slower than the other ball in the direction of the normal,
+        // and they are not moving towards each other, so the travelling ball cannot catch up to the other ball and collide with it.
+        if (Math.Abs(travellingBallVelN) < Math.Abs(otherBallVelN) && travellingBallVelN * otherBallVelN >= 0)
+        {
+            return false;
+        }
+        return true;
     }
 
     public IVector ProgressTToPoint(double t)
     {
         return new Vector()
         {
-            X = StartingX + t * (EndingX - StartingX),
-            Y = StartingY + t * (EndingY - StartingY)
+            X = StartingX + t * DiffX,
+            Y = StartingY + t * DiffY
         };
     } 
 }
