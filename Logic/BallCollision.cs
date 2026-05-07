@@ -4,6 +4,7 @@ namespace Logic;
 
 internal class BallCollision : ICollision
 {
+    private static readonly object _collisionLock = new object();
     private readonly IDataBall travellingBall;
     private readonly IDataBall stationaryBall;
     /// <copydoc cref="ICollision.TPosition"/>
@@ -23,37 +24,39 @@ internal class BallCollision : ICollision
     /// <copydoc cref="ICollision.PerformCollision"/>
     public void PerformCollision()
     {
-        IVector newPos = Trajectory.ProgressTToPoint(TPosition);
-
-        double radiusSum = travellingBall.Radius + stationaryBall.Radius;
-        double weightSum = travellingBall.Weight + stationaryBall.Weight;
-
-        // normalized from travelling ball towards stationary ball
-        Vector normal = new Vector()
+        lock (_collisionLock)
         {
-            X = (stationaryBall.X - newPos.X) / radiusSum,
-            Y = (stationaryBall.Y - newPos.Y) / radiusSum
-        };
+            IVector newPos = Trajectory.ProgressTToPoint(TPosition);
 
+            double radiusSum = travellingBall.Radius + stationaryBall.Radius;
+            double weightSum = travellingBall.Weight + stationaryBall.Weight;
 
-        double v1N = travellingBall.Velocity.Dot(normal);
-        double v2N = stationaryBall.Velocity.Dot(normal);
+            // normalized from travelling ball towards stationary ball
+            Vector normal = new Vector()
+            {
+                X = (stationaryBall.X - newPos.X) / radiusSum,
+                Y = (stationaryBall.Y - newPos.Y) / radiusSum
+            };
 
-        double newV1N = (v1N * (travellingBall.Weight - stationaryBall.Weight) + 2 * stationaryBall.Weight * v2N) / weightSum;
-        double newV2N = (v2N * (stationaryBall.Weight - travellingBall.Weight) + 2 * travellingBall.Weight * v1N) / weightSum;
+            double v1N = travellingBall.Velocity.Dot(normal);
+            double v2N = stationaryBall.Velocity.Dot(normal);
 
-        IVector newVel1 = new Vector
-        {
-            X = travellingBall.Velocity.X + (newV1N - v1N) * normal.X,
-            Y = travellingBall.Velocity.Y + (newV1N - v1N) * normal.Y
-        };
-        IVector newVel2 = new Vector
-        {
-            X = stationaryBall.Velocity.X + (newV2N - v2N) * normal.X,
-            Y = stationaryBall.Velocity.Y + (newV2N - v2N) * normal.Y
-        };
+            double newV1N = (v1N * (travellingBall.Weight - stationaryBall.Weight) + 2 * stationaryBall.Weight * v2N) / weightSum;
+            double newV2N = (v2N * (stationaryBall.Weight - travellingBall.Weight) + 2 * travellingBall.Weight * v1N) / weightSum;
 
-        travellingBall.Update(newPos, newVel1);
-        stationaryBall.Update(null, newVel2);
+            IVector newVel1 = new Vector
+            {
+                X = travellingBall.Velocity.X + (newV1N - v1N) * normal.X,
+                Y = travellingBall.Velocity.Y + (newV1N - v1N) * normal.Y
+            };
+            IVector newVel2 = new Vector
+            {
+                X = stationaryBall.Velocity.X + (newV2N - v2N) * normal.X,
+                Y = stationaryBall.Velocity.Y + (newV2N - v2N) * normal.Y
+            };
+
+            travellingBall.Update(newPos, newVel1);
+            stationaryBall.Update(null, newVel2);
+        }
     }
 }

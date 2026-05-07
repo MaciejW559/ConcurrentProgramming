@@ -41,9 +41,9 @@ namespace ViewModel
             StartCommand = new RelayCommand(StartSimulation);
         }
 
-        private void StartSimulation()
+        private async void StartSimulation()
         {
-            _modelLayer.StartSimulation(BallCount);
+            await _modelLayer.StartSimulation(BallCount);
         }
     }
 }

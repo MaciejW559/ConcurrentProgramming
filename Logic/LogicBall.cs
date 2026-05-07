@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using Data;
 
@@ -12,11 +13,11 @@ namespace Logic
         private readonly double _right;
         private readonly double _top;
         private readonly double _bottom;
-        
+
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        
+
         // Intentionally separate from the underlying DataBall,
         // to avoid race conditions which could happen if properties were read
         // while the DataBall and LogicBall were in the middle of figuring out multiple bounces.
@@ -41,7 +42,8 @@ namespace Logic
         private readonly IDataBall _dataBall;
         private Boolean _midMovement = false;
 
-        public LogicBall(IDataBall dataBall) { 
+        public LogicBall(IDataBall dataBall)
+        {
             _dataBall = dataBall;
 
             _left = Radius;
@@ -58,6 +60,22 @@ namespace Logic
             if (!IsInBoundsY(dataBall.Y)) throw new ArgumentException("Initial Databall position out of bounds");
 
             _dataBall.PropertyChanged += DataBall_PropertyChanged;
+        }
+
+        public async Task RunSimulationLoopAsync(Collection<LogicBall> allBalls, CancellationToken token)
+        {
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
+
+            while (!token.IsCancellationRequested)
+            {
+                double deltaTime = stopwatch.Elapsed.TotalSeconds;
+                stopwatch.Restart();
+
+                Move(deltaTime, allBalls);
+
+                await Task.Delay(8, token);
+            }
         }
 
 

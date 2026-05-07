@@ -39,9 +39,6 @@ namespace ModelTest
                 }
             }
 
-            public Task SequentialMainLoop() => Task.CompletedTask;
-
-            public void Move(double _deltaTime) { }
             public void AbandonMainLoop() { }
         }
 
