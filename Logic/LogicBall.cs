@@ -9,6 +9,8 @@ namespace Logic
     internal class LogicBall : IBall
     {
         private static readonly Lock _moveLock = new();
+        private readonly Lock _propertyLock = new();
+
         private static readonly double INVERSE_ASPECT_RATIO = 1.0 / IData.SIMULATION_ROOM_ASPECT_RATIO;
         private readonly double _left;
         private readonly double _right;
@@ -25,16 +27,46 @@ namespace Logic
         /// <summary>
         /// X coordinate normalized to [0, 1]
         /// </summary>
-        public double X { get; private set; }
+        public double X
+        {
+            get
+            {
+                lock (_propertyLock) return field;
+            }
+            private set
+            {
+                lock (_propertyLock) field = value;
+            }
+        }
         /// <summary>
         /// Y coordinate normalized to [0, 1]
         /// </summary>
-        public double Y { get; private set; }
-
+        public double Y
+        {
+            get
+            {
+                lock (_propertyLock) return field;
+            }
+            private set
+            {
+                lock (_propertyLock) field = value;
+            }
+        }
         /// <summary>
         /// Normalized velocity
         /// </summary>
-        public IVector Velocity { get; private set; }
+        public IVector Velocity
+        {
+            get
+            {
+                lock (_propertyLock) return field;
+            }
+            private set
+            {
+                lock (_propertyLock) field = value;
+            }
+        }
+
 
         public double Radius => _dataBall.Radius;
         public double Weight => _dataBall.Weight;
@@ -181,9 +213,12 @@ namespace Logic
 
         private void UpdatePropertiesFromDataBall()
         {
-            Velocity = new Vector { X = _dataBall.Velocity.X * INVERSE_ASPECT_RATIO, Y = _dataBall.Velocity.Y };
-            X = _dataBall.X * INVERSE_ASPECT_RATIO;
-            Y = _dataBall.Y;
+            lock (_propertyLock)
+            {
+                Velocity = new Vector { X = _dataBall.Velocity.X * INVERSE_ASPECT_RATIO, Y = _dataBall.Velocity.Y };
+                X = _dataBall.X * INVERSE_ASPECT_RATIO;
+                Y = _dataBall.Y;
+            }
         }
     }
 }
