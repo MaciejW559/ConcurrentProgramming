@@ -44,7 +44,9 @@ namespace Logic
                 balls.Add(logicBall);
                 upperLayerHandler(logicBall);
 
-                _tasks.Add(Task.Run(() => logicBall.RunSimulationLoopAsync(balls, tokenSource.Token)));
+                _tasks.Add(
+                    Task.Run(() => logicBall.RunSimulationLoopAsync(balls, tokenSource.Token), tokenSource.Token)
+                    );
             };
 
             layerUnderneathAPI.Start(ballCount, registerBallWithUpperLayerHandler);

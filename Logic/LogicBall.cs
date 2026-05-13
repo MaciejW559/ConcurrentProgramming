@@ -8,6 +8,7 @@ namespace Logic
 {
     internal class LogicBall : IBall
     {
+        private static readonly Lock _moveLock = new();
         private static readonly double INVERSE_ASPECT_RATIO = 1.0 / IData.SIMULATION_ROOM_ASPECT_RATIO;
         private readonly double _left;
         private readonly double _right;
@@ -64,17 +65,23 @@ namespace Logic
 
         public async Task RunSimulationLoopAsync(Collection<LogicBall> allBalls, CancellationToken token)
         {
-            var stopwatch = new Stopwatch();
-            stopwatch.Start();
 
-            while (!token.IsCancellationRequested)
+            using var timer = new PeriodicTimer(TimeSpan.FromSeconds(1.0 / ILogic.FPS));
+            var timestamp = Stopwatch.GetTimestamp();
+
+            try
             {
-                double deltaTime = stopwatch.Elapsed.TotalSeconds;
-                stopwatch.Restart();
+                while (await timer.WaitForNextTickAsync(token))
+                {
+                    var elapsed = Stopwatch.GetElapsedTime(timestamp);
+                    timestamp = Stopwatch.GetTimestamp();
 
-                Move(deltaTime, allBalls);
-
-                await Task.Delay(8, token);
+                    Move(elapsed.TotalSeconds, allBalls);
+                }
+            }
+            catch (OperationCanceledException)
+            {
+                // expected, token triggered cancellation
             }
         }
 
@@ -98,55 +105,58 @@ namespace Logic
         /// <param name="deltaTime"></param>
         public void Move(double deltaTime, Collection<LogicBall> balls)
         {
-            _midMovement = true;
-            while (true)
+            lock (_moveLock)
             {
-                Trajectory trajectory = new Trajectory(
-                    _dataBall,
-                    deltaTime
-                );
-
-                List<ICollision> collisions = [];
-
-                // check wall collisions
-                ICollision leftWallCollision = new WallCollision(_dataBall, trajectory, -1, 0, _left);
-                leftWallCollision.AddToListIfColliding(collisions);
-
-                ICollision rightWallCollision = new WallCollision(_dataBall, trajectory, 1, 0, -_right);
-                rightWallCollision.AddToListIfColliding(collisions);
-
-                ICollision topWallCollision = new WallCollision(_dataBall, trajectory, 0, -1, _top);
-                topWallCollision.AddToListIfColliding(collisions);
-
-                ICollision bottomWallCollision = new WallCollision(_dataBall, trajectory, 0, 1, -_bottom);
-                bottomWallCollision.AddToListIfColliding(collisions);
-
-
-                // check ball collisions
-                foreach (LogicBall otherBall in balls)
+                _midMovement = true;
+                while (true)
                 {
-                    if (otherBall == this) continue;
+                    Trajectory trajectory = new Trajectory(
+                        _dataBall,
+                        deltaTime
+                    );
 
-                    ICollision ballCollision = new BallCollision(_dataBall, otherBall._dataBall, trajectory);
-                    ballCollision.AddToListIfColliding(collisions);
+                    List<ICollision> collisions = [];
+
+                    // check wall collisions
+                    ICollision leftWallCollision = new WallCollision(_dataBall, trajectory, -1, 0, _left);
+                    leftWallCollision.AddToListIfColliding(collisions);
+
+                    ICollision rightWallCollision = new WallCollision(_dataBall, trajectory, 1, 0, -_right);
+                    rightWallCollision.AddToListIfColliding(collisions);
+
+                    ICollision topWallCollision = new WallCollision(_dataBall, trajectory, 0, -1, _top);
+                    topWallCollision.AddToListIfColliding(collisions);
+
+                    ICollision bottomWallCollision = new WallCollision(_dataBall, trajectory, 0, 1, -_bottom);
+                    bottomWallCollision.AddToListIfColliding(collisions);
+
+
+                    // check ball collisions
+                    foreach (LogicBall otherBall in balls)
+                    {
+                        if (otherBall == this) continue;
+
+                        ICollision ballCollision = new BallCollision(_dataBall, otherBall._dataBall, trajectory);
+                        ballCollision.AddToListIfColliding(collisions);
+                    }
+
+                    if (collisions.Count == 0)
+                    {
+                        _dataBall.Update(new Vector { X = trajectory.EndingX, Y = trajectory.EndingY }, null);
+                        break;
+                    }
+
+                    ICollision? earliestCollision = collisions.MinBy(collision => collision.TPosition) ?? throw new Exception("Collisions list was empty, after checking that is it not");
+
+                    earliestCollision.PerformCollision();
+                    deltaTime = deltaTime * (1 - earliestCollision.TPosition);
                 }
 
-                if (collisions.Count == 0)
-                {
-                    _dataBall.Update(new Vector { X = trajectory.EndingX, Y = trajectory.EndingY }, null);
-                    break;
-                }
-
-                ICollision? earliestCollision = collisions.MinBy(collision => collision.TPosition) ?? throw new Exception("Collisions list was empty, after checking that is it not");
-
-                earliestCollision.PerformCollision();
-                deltaTime = deltaTime * (1 - earliestCollision.TPosition);
+                _midMovement = false;
+                UpdatePropertiesFromDataBall();
+                OnPropertyChanged(nameof(X));
+                OnPropertyChanged(nameof(Y)); 
             }
-
-            _midMovement = false;
-            UpdatePropertiesFromDataBall();
-            OnPropertyChanged(nameof(X));
-            OnPropertyChanged(nameof(Y));
         }
 
         protected void OnPropertyChanged([CallerMemberName] string? name = null)
