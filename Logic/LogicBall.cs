@@ -95,7 +95,7 @@ namespace Logic
             _dataBall.PropertyChanged += DataBall_PropertyChanged;
         }
 
-        public async Task RunSimulationLoopAsync(Collection<LogicBall> allBalls, CancellationToken token)
+        public async Task RunSimulationLoopAsync(Collection<LogicBall> allBalls, CancellationToken token, Barrier barrier)
         {
 
             using var timer = new PeriodicTimer(TimeSpan.FromSeconds(1.0 / ILogic.FPS));
@@ -109,6 +109,7 @@ namespace Logic
                     timestamp = Stopwatch.GetTimestamp();
 
                     Move(elapsed.TotalSeconds, allBalls);
+                    barrier.SignalAndWait(token);
                 }
             }
             catch (OperationCanceledException)

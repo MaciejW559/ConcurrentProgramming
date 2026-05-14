@@ -27,21 +27,21 @@ namespace LogicTest
             var logicLayer = new LogicLayer(fakeData);
             int receivedBalls = 0;
 
-            logicLayer.Start(5, (ball) => { receivedBalls++; });
+            _ = logicLayer.Start(5, (ball) => { receivedBalls++; });
 
             Assert.AreEqual(5, fakeData.StartedBallsCount, "Warstwa logiki powinna przekazać odpowiednią liczbę do warstwy danych.");
             Assert.AreEqual(5, receivedBalls, "Warstwa logiki powinna powiadomić wyższą warstwę (wywołać handler) dla każdej utworzonej kuli.");
         }
 
         [TestMethod]
-        public void AbandonMainLoop_ShouldNotThrowException()
+        public async Task AbandonMainLoop_ShouldNotThrowException()
         {
             var fakeData = new FakeDataApi();
             var logicLayer = new LogicLayer(fakeData);
 
-            logicLayer.Start(1, (ball) => { });
+            Task loopCreationTask = logicLayer.Start(1, (ball) => { });
             logicLayer.AbandonMainLoop();
-
+            await loopCreationTask;
             Assert.IsTrue(true);
         }
 

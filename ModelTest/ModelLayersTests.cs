@@ -30,13 +30,14 @@ namespace ModelTest
         {
             public int StartedBallCount { get; private set; } = 0;
 
-            public void Start(int ballCount, Action<IBall> upperLayerHandler)
+            public Task Start(int ballCount, Action<IBall> upperLayerHandler)
             {
                 StartedBallCount = ballCount;
                 for (int i = 0; i < ballCount; i++)
                 {
                     upperLayerHandler(new FakeBall());
                 }
+                return Task.CompletedTask;
             }
 
             public void AbandonMainLoop() { }

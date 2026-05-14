@@ -9,8 +9,9 @@ namespace Logic
 
         IData layerUnderneathAPI;
 
-        private ObservableCollection<LogicBall> balls { get; }
-        private List<Task> _tasks = new();
+        private readonly ObservableCollection<LogicBall> balls = [];
+        private readonly List<Task> _tasks = [];
+        private Barrier? _barrier;
 
         /// <summary>
         /// CancellationTokenSource used to signal the main loop to stop.
@@ -22,21 +23,28 @@ namespace Logic
         public LogicLayer(IData layerUnderneathAPI)
         {
             this.layerUnderneathAPI = layerUnderneathAPI;
-            balls = new ObservableCollection<LogicBall>();
         }
 
 
-        public void Start(int ballCount, Action<IBall> upperLayerHandler)
+        public async Task Start(int ballCount, Action<IBall> upperLayerHandler)
         {
-            balls.Clear();
-            tokenSource?.Cancel();
-            tokenSource = new CancellationTokenSource();
-            _tasks.Clear();
-
             if (ballCount < 0)
             {
                 throw new ArgumentException("Can't initialize a simulation with a negative number of balls.");
             }
+            tokenSource?.Cancel();
+            tokenSource = new CancellationTokenSource();
+
+            foreach (Task task in _tasks)
+            {
+                await task;
+            }
+            
+            _tasks.Clear();
+            balls.Clear();
+
+
+            _barrier = new Barrier(ballCount);
 
             Action<IDataBall> registerBallWithUpperLayerHandler = (ball) =>
             {
@@ -45,7 +53,7 @@ namespace Logic
                 upperLayerHandler(logicBall);
 
                 _tasks.Add(
-                    Task.Run(() => logicBall.RunSimulationLoopAsync(balls, tokenSource.Token), tokenSource.Token)
+                    Task.Run(() => logicBall.RunSimulationLoopAsync(balls, tokenSource.Token, _barrier))
                     );
             };
 
