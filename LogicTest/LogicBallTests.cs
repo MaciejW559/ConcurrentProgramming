@@ -51,7 +51,7 @@ namespace LogicTest
             Assert.AreEqual(expectedX, logicBall.X, 0.0001, "Incorrect bounce off left wall");
             Assert.AreEqual(0.1, logicBall.Velocity.X, 0.0001, "Velocity.X has not been flipped");
             Assert.AreEqual(0, logicBall.Velocity.Y, 0.0001, "Velocity.Y should not have changed");
-            Assert.AreEqual(2, calls);
+            Assert.AreEqual(4, calls);
         }
 
         [TestMethod]
@@ -72,7 +72,7 @@ namespace LogicTest
             Assert.AreEqual(expectedX, logicBall.X, 0.0001, "Incorrect bounce off right wall");
             Assert.AreEqual(-0.1, logicBall.Velocity.X, 0.0001, "Velocity.X has not been flipped");
             Assert.AreEqual(0, logicBall.Velocity.Y, 0.0001, "Velocity.Y should not have changed");
-            Assert.AreEqual(2, calls);
+            Assert.AreEqual(4, calls);
         }
 
         [TestMethod]
@@ -93,7 +93,7 @@ namespace LogicTest
             Assert.AreEqual(expectedY, logicBall.Y, 0.0001, "Odbicie od górnej ściany (Y) jest nieprawidłowe.");
             Assert.AreEqual(0.1, logicBall.Velocity.Y, 0.0001, "Prędkość Y powinna zostać odwrócona.");
             Assert.AreEqual(0, logicBall.Velocity.X, 0.0001, "Velocity.X should not have changed");
-            Assert.AreEqual(2, calls);
+            Assert.AreEqual(4, calls);
         }
 
         [TestMethod]
@@ -114,7 +114,7 @@ namespace LogicTest
             Assert.AreEqual(expectedY, logicBall.Y, 0.0001, "Odbicie od dolnej ściany (Y) jest nieprawidłowe.");
             Assert.AreEqual(-0.1, logicBall.Velocity.Y, 0.0001, "Prędkość Y powinna zostać odwrócona.");
             Assert.AreEqual(0, logicBall.Velocity.X, 0.0001, "Velocity.X should not have changed");
-            Assert.AreEqual(2, calls);
+            Assert.AreEqual(4, calls);
         }
 
 

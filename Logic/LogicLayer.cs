@@ -43,7 +43,7 @@ namespace Logic
             _tasks.Clear();
             balls.Clear();
 
-
+            ThreadPool.SetMinThreads(ballCount + 2, ballCount + 2);
             _barrier = new Barrier(ballCount);
 
             Action<IDataBall> registerBallWithUpperLayerHandler = (ball) =>

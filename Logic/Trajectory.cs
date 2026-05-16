@@ -8,7 +8,7 @@ namespace Logic;
 /// </summary>
 internal class Trajectory
 {
-    private readonly IBall ball;
+    private readonly IVector Velocity;
 
     public double StartingX { get; private set; }
     public double StartingY { get; private set; }
@@ -29,7 +29,7 @@ internal class Trajectory
         EndingX = StartingX + DiffX;
         EndingY = StartingY + DiffY;
         Radius = ball.Radius;
-        this.ball = ball;
+        Velocity = new Vector { X = ball.Velocity.X, Y = ball.Velocity.Y };
     }
 
 
@@ -124,7 +124,7 @@ internal class Trajectory
         };
 
 
-        double travellingBallVelN = ball.Velocity.Dot(normal);
+        double travellingBallVelN = Velocity.Dot(normal);
         double otherBallVelN = otherBall.Velocity.Dot(normal);
 
         // travelling ball is slower than the other ball in the direction of the normal,
