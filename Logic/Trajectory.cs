@@ -67,7 +67,35 @@ internal class Trajectory
         return d1 / (d1 - d2);
     }
 
- 
+    /// <summary>
+    /// Finds whether the trajectory of the ball (not point) could collide with a half-plane defined by
+    /// ax + by + c > 0
+    /// 
+    /// </summary>
+    /// <param name="a" x coefficient></param>
+    /// <param name="b" y coefficient></param>
+    /// <param name="c" free term></param>
+    /// <returns>true if it could, false if not</returns>
+    public bool CouldCollideWithHalfPlane(double a, double b, double c)
+    {
+        double a2b2 = Math.Sqrt(a * a + b * b);
+
+        if ((a * StartingX + b * StartingY + c) / a2b2 > -Radius)
+        {
+            return true; // starts in the half-plane or clips it with its radious
+        }
+
+        if ((a * EndingX + b * EndingY + c) / a2b2 > -Radius)
+        {
+            return true; // ends in the half-plane or clips it with its radious
+        }
+        return false;
+    }
+
+    public static bool CouldPosCollideWithHalfPlane(double a, double b, double c, double x, double y, double radius)
+    {
+        return (a * x + b * y + c) / Math.Sqrt(a * a + b * b) > -radius;
+    }
 
     public double CollideWithBall(IBall otherBall)
     {

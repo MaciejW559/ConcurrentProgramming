@@ -17,6 +17,7 @@ namespace Logic
         private readonly double _top;
         private readonly double _bottom;
 
+        private Action unregisterFromPartition;
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -138,59 +139,83 @@ namespace Logic
         /// <param name="deltaTime"></param>
         public void Move(double deltaTime, Collection<LogicBall> balls)
         {
-            lock (_moveLock)
+            _midMovement = true;
+            while (true)
             {
-                _midMovement = true;
-                while (true)
+                _moveLock.Enter();
+                try
                 {
                     Trajectory trajectory = new Trajectory(
                         _dataBall,
                         deltaTime
                     );
-
-                    List<ICollision> collisions = [];
-
-                    // check wall collisions
-                    ICollision leftWallCollision = new WallCollision(_dataBall, trajectory, -1, 0, _left);
-                    leftWallCollision.AddToListIfColliding(collisions);
-
-                    ICollision rightWallCollision = new WallCollision(_dataBall, trajectory, 1, 0, -_right);
-                    rightWallCollision.AddToListIfColliding(collisions);
-
-                    ICollision topWallCollision = new WallCollision(_dataBall, trajectory, 0, -1, _top);
-                    topWallCollision.AddToListIfColliding(collisions);
-
-                    ICollision bottomWallCollision = new WallCollision(_dataBall, trajectory, 0, 1, -_bottom);
-                    bottomWallCollision.AddToListIfColliding(collisions);
-
-
-                    // check ball collisions
-                    foreach (LogicBall otherBall in balls)
-                    {
-                        if (otherBall == this) continue;
-
-                        ICollision ballCollision = new BallCollision(_dataBall, otherBall._dataBall, trajectory);
-                        ballCollision.AddToListIfColliding(collisions);
-                    }
-
-                    if (collisions.Count == 0)
-                    {
-                        _dataBall.Update(new Vector { X = trajectory.EndingX, Y = trajectory.EndingY }, null);
-                        break;
-                    }
-
-                    ICollision? earliestCollision = collisions.MinBy(collision => collision.TPosition) ?? throw new Exception("Collisions list was empty, after checking that is it not");
-
-                    earliestCollision.PerformCollision();
-                    deltaTime = deltaTime * (1 - earliestCollision.TPosition);
+                    BinarySpacePartition.masterPartition.FindAndLockMinimalPartition(
+                        (otherBallsInPartition) =>
+                        {
+                            _moveLock.Exit();
+                            deltaTime = MoveIteration(deltaTime, trajectory, otherBallsInPartition);
+                        },
+                        trajectory
+                    );
+                } catch (Exception)
+                {
+                    _moveLock.Exit();
+                    throw;
                 }
+                ReregisterInPartitioningSystem();
 
-                _midMovement = false;
-                UpdatePropertiesFromDataBall();
-                OnPropertyChanged(nameof(X));
-                OnPropertyChanged(nameof(Y)); 
+
+                if (deltaTime <= 0) break;
+
             }
+
+            _midMovement = false;
+            UpdatePropertiesFromDataBall();
+            OnPropertyChanged(nameof(X));
+            OnPropertyChanged(nameof(Y));
+            return;
         }
+
+        private double MoveIteration(double deltaTime, Trajectory trajectory, IEnumerable<LogicBall> otherBallsInPartition)
+        {
+            List<ICollision> collisions = [];
+
+            // check wall collisions
+            ICollision leftWallCollision = new WallCollision(_dataBall, trajectory, -1, 0, _left);
+            leftWallCollision.AddToListIfColliding(collisions);
+
+            ICollision rightWallCollision = new WallCollision(_dataBall, trajectory, 1, 0, -_right);
+            rightWallCollision.AddToListIfColliding(collisions);
+
+            ICollision topWallCollision = new WallCollision(_dataBall, trajectory, 0, -1, _top);
+            topWallCollision.AddToListIfColliding(collisions);
+
+            ICollision bottomWallCollision = new WallCollision(_dataBall, trajectory, 0, 1, -_bottom);
+            bottomWallCollision.AddToListIfColliding(collisions);
+
+
+            // check ball collisions
+            foreach (LogicBall otherBall in otherBallsInPartition)
+            {
+                if (otherBall == this) continue;
+
+                ICollision ballCollision = new BallCollision(_dataBall, otherBall._dataBall, trajectory);
+                ballCollision.AddToListIfColliding(collisions);
+            }
+
+            if (collisions.Count == 0)
+            {
+                _dataBall.Update(new Vector { X = trajectory.EndingX, Y = trajectory.EndingY }, null);
+                return 0;
+
+            }
+
+            ICollision? earliestCollision = collisions.MinBy(collision => collision.TPosition) ?? throw new Exception("Collisions list was empty, after checking that is it not");
+
+            earliestCollision.PerformCollision();
+            return deltaTime * (1 - earliestCollision.TPosition);
+        }
+            
 
         protected void OnPropertyChanged([CallerMemberName] string? name = null)
         {
@@ -219,7 +244,15 @@ namespace Logic
                 Velocity = new Vector { X = _dataBall.Velocity.X * INVERSE_ASPECT_RATIO, Y = _dataBall.Velocity.Y };
                 X = _dataBall.X * INVERSE_ASPECT_RATIO;
                 Y = _dataBall.Y;
+                ReregisterInPartitioningSystem();
             }
+        }
+
+        private void ReregisterInPartitioningSystem()
+        {
+            unregisterFromPartition?.Invoke();
+            unregisterFromPartition = BinarySpacePartition.masterPartition.RegisterBallInPartitioningSystem(this);
+
         }
     }
 }
