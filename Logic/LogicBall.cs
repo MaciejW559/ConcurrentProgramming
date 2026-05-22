@@ -11,6 +11,7 @@ namespace Logic
         private static readonly Lock _moveLock = new();
         private readonly Lock _propertyLock = new();
 
+
         private static readonly double INVERSE_ASPECT_RATIO = 1.0 / IData.SIMULATION_ROOM_ASPECT_RATIO;
         private readonly double _left;
         private readonly double _right;
@@ -71,14 +72,15 @@ namespace Logic
         public double Radius => _dataBall.Radius;
         public double Weight => _dataBall.Weight;
 
-
+        private readonly ILogger? _logger;
         private readonly IDataBall _dataBall;
         private bool _midMovement = false;
         private bool _movedSince = false;
 
-        public LogicBall(IDataBall dataBall)
+        public LogicBall(IDataBall dataBall, ILogger? logger = null)
         {
             _dataBall = dataBall;
+            _logger = logger;
 
             _left = Radius;
             _right = IData.SIMULATION_ROOM_ASPECT_RATIO - _left;
@@ -205,6 +207,15 @@ namespace Logic
                 ICollision? earliestCollision = collisions.MinBy(collision => collision.TPosition) ?? throw new Exception("Collisions list was empty, after checking that is it not");
 
                 earliestCollision.PerformCollision();
+
+                _logger?.Log(new
+                {
+                    Event = "Collision",
+                    Type = earliestCollision.GetType().Name,
+                    BallVelocityX = Velocity.X,
+                    BallVelocityY = Velocity.Y
+                });
+
                 return deltaTime * (1 - earliestCollision.TPosition);
             }
         }

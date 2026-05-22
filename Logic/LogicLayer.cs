@@ -8,6 +8,7 @@ namespace Logic
     {
 
         IData layerUnderneathAPI;
+        private readonly ILogger? _logger;
 
         private readonly ObservableCollection<LogicBall> balls = [];
         private readonly List<Task> _tasks = [];
@@ -20,9 +21,10 @@ namespace Logic
         private CancellationTokenSource? tokenSource;
 
 
-        public LogicLayer(IData layerUnderneathAPI)
+        public LogicLayer(IData layerUnderneathAPI, ILogger? logger = null)
         {
             this.layerUnderneathAPI = layerUnderneathAPI;
+            _logger = logger;
         }
 
 
@@ -43,12 +45,12 @@ namespace Logic
             _tasks.Clear();
             balls.Clear();
 
-            ThreadPool.SetMinThreads(ballCount + 2, ballCount + 2);
+            ThreadPool.SetMinThreads(ballCount + 3, ballCount + 3);
             _barrier = new Barrier(ballCount);
 
             Action<IDataBall> registerBallWithUpperLayerHandler = (ball) =>
             {
-                LogicBall logicBall = new LogicBall(ball);
+                LogicBall logicBall = new LogicBall(ball, _logger);
                 balls.Add(logicBall);
                 upperLayerHandler(logicBall);
 

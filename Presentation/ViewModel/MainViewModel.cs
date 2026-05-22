@@ -1,13 +1,15 @@
-﻿using System.Collections.ObjectModel;
-using System.Windows.Input;
+﻿using Data;
 using Logic;
 using Model;
+using System.Collections.ObjectModel;
+using System.Windows.Input;
 
 namespace ViewModel
 {
     public class MainViewModel : ViewModelBase
     {
         private readonly IModel _modelLayer;
+        private readonly Logger _logger;
         public static double DEFAULT_WIDTH => IModel.DEFAULT_WIDTH;
         public static double DEFAULT_HEIGHT => IModel.DEFAULT_HEIGHT;
         private int _ballCount = 5;
@@ -27,9 +29,14 @@ namespace ViewModel
 
         public MainViewModel()
         {
+            _logger = new Logger("BallsLogs.txt");
+
+            Task.Run(() => _logger.LoggingThread(CancellationToken.None));
+
             _modelLayer = new ModelLayer(
                 new LogicLayer(
-                    new Data.DataLayer()
+                    new Data.DataLayer(),
+                    _logger
                 )
             );
             StartCommand = new RelayCommand(StartSimulation);
