@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Concurrent;
 using System.Text.Json;
 
 namespace Data
@@ -37,10 +33,6 @@ namespace Data
                 catch (OperationCanceledException)
                 {
                     break;
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Failed to append to log file: {filePath}: {ex}");
                 }
             }
         }
