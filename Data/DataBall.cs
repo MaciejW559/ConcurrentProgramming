@@ -30,7 +30,7 @@ namespace Data
         /// <summary>
         /// Maximum random initial velocity on each of the axis individually
         /// </summary>
-        private const double MAX_RANDOM_VELOCITY = 0.6;
+        private const double MAX_RANDOM_VELOCITY = 0.3;
 
 
         /// <summary>

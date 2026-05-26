@@ -1,8 +1,9 @@
-﻿using Data;
+﻿using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Windows.Input;
+using Data;
 using Logic;
 using Model;
-using System.Collections.ObjectModel;
-using System.Windows.Input;
 
 namespace ViewModel
 {
@@ -13,6 +14,8 @@ namespace ViewModel
         public static double DEFAULT_WIDTH => IModel.DEFAULT_WIDTH;
         public static double DEFAULT_HEIGHT => IModel.DEFAULT_HEIGHT;
         private int _ballCount = 5;
+
+        public double CurrentTime { get; private set; }
 
         public ObservableCollection<BallModel> Balls => _modelLayer.Balls;
         public ICommand StartCommand { get; }
@@ -39,6 +42,18 @@ namespace ViewModel
                     _logger
                 )
             );
+
+            var stopwatch = new VisualStopwatch();
+            Task.Run(() => stopwatch.RunStopwatch(CancellationToken.None));
+            stopwatch.PropertyChanged += (sender, args) =>
+            {
+                if (args.PropertyName == nameof(stopwatch.CurrentTime))
+                {
+                    CurrentTime = stopwatch.CurrentTime;
+                    OnPropertyChanged(nameof(CurrentTime));
+                }
+            };
+
             StartCommand = new RelayCommand(StartSimulation);
         }
 
@@ -52,5 +67,7 @@ namespace ViewModel
         {
             await _modelLayer.StartSimulation(BallCount);
         }
+
+
     }
 }

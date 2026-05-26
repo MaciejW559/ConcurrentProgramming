@@ -102,16 +102,13 @@ namespace Logic
         {
 
             using var timer = new PeriodicTimer(TimeSpan.FromSeconds(1.0 / ILogic.FPS));
-            var timestamp = Stopwatch.GetTimestamp();
 
             try
             {
                 while (await timer.WaitForNextTickAsync(token))
                 {
-                    var elapsed = Stopwatch.GetElapsedTime(timestamp);
-                    timestamp = Stopwatch.GetTimestamp();
 
-                    Move(elapsed.TotalSeconds, allBalls);
+                    Move(1.0 / ILogic.FPS, allBalls);
                     barrier.SignalAndWait(token);
                 }
             }

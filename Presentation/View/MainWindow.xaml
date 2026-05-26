@@ -18,6 +18,22 @@
             <ColumnDefinition Width="150" />
         </Grid.ColumnDefinitions>
 
+        <StackPanel Grid.Column="0" 
+            Orientation="Vertical" 
+            VerticalAlignment="Center" 
+            HorizontalAlignment="Center" 
+            >
+
+            <Label Content="Obecny czas:" 
+            HorizontalAlignment="Center" 
+            Margin="0,0,0,5"/>
+
+            <Label Content="{Binding CurrentTime, UpdateSourceTrigger=PropertyChanged}" 
+           HorizontalAlignment="Center" 
+           Margin="0,0,0,5"/>
+
+        </StackPanel>
+
         <Viewbox Grid.Column="1" Stretch="Uniform">
             <Border
                 Width="{Binding DEFAULT_WIDTH}"

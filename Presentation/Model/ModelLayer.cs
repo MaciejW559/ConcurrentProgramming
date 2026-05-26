@@ -1,4 +1,6 @@
 ﻿using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using Logic;
 
 namespace Model
@@ -7,6 +9,7 @@ namespace Model
     {
         private readonly ILogic _logicLayer;
         public ObservableCollection<BallModel> Balls { get; } = [];
+
 
         public ModelLayer(ILogic logicLayer)
         {
